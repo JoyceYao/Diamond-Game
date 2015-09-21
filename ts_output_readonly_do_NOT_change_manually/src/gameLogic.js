@@ -1,31 +1,49 @@
+var playersMap = {};
+//var playersMap = { 0:'R', 1:'G', 2:'Y' };
 var gameLogic;
 (function (gameLogic) {
+    /** Map playerIdx with player color */
+    function initialPLayersMap() {
+        playersMap[0] = 'R';
+        playersMap[1] = 'G';
+        playersMap[2] = 'Y';
+    }
+    gameLogic.initialPLayersMap = initialPLayersMap;
     /** Returns the initial TicTacToe board, which is a 3x3 matrix containing ''. */
-    function getInitialBoard() {
-        return [['', '', ''],
-            ['', '', ''],
-            ['', '', '']];
+    function getInitialBoard(playerNo) {
+        switch (playerNo) {
+            case 2:
+                return [['#', '#', '#', '#', '#', '#', '#', '#', '#', 'R', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
+                    ['#', '#', '#', '#', '#', '#', '#', '#', 'R', '', 'R', '#', '#', '#', '#', '#', '#', '#', '#'],
+                    ['#', '#', '#', '#', '#', '#', '#', 'R', '', 'R', '', 'R', '#', '#', '#', '#', '#', '#', '#'],
+                    ['', '', '', '', '', '', 'R', '', 'R', '', 'R', '', 'R', '', '', '', '', '', ''],
+                    ['#', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '#'],
+                    ['#', '#', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '#', '#'],
+                    ['#', '#', '#', 'G', '', '', '', '', '', '', '', '', '', '', '', '', '#', '#', '#'],
+                    ['#', '#', 'G', '', 'G', '', '', '', '', '', '', '', '', '', '', '', '', '#', '#'],
+                    ['#', 'G', '', 'G', '', 'G', '', '', '', '', '', '', '', '', '', '', '', '', '#'],
+                    ['G', '', 'G', '', 'G', '', 'G', '', '', '', '', '', '', '', '', '', '', '', ''],
+                    ['#', '#', '#', '#', '#', '#', '#', '', '', '', '', '', '#', '#', '#', '#', '#', '#', '#'],
+                    ['#', '#', '#', '#', '#', '#', '#', '#', '', '', '', '#', '#', '#', '#', '#', '#', '#', '#'],
+                    ['#', '#', '#', '#', '#', '#', '#', '#', '#', '', '#', '#', '#', '#', '#', '#', '#', '#', '#']];
+            case 3:
+                return [['#', '#', '#', '#', '#', '#', '#', '#', '#', 'R', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
+                    ['#', '#', '#', '#', '#', '#', '#', '#', 'R', '', 'R', '#', '#', '#', '#', '#', '#', '#', '#'],
+                    ['#', '#', '#', '#', '#', '#', '#', 'R', '', 'R', '', 'R', '#', '#', '#', '#', '#', '#', '#'],
+                    ['', '', '', '', '', '', 'R', '', 'R', '', 'R', '', 'R', '', '', '', '', '', ''],
+                    ['#', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '#'],
+                    ['#', '#', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '#', '#'],
+                    ['#', '#', '#', 'G', '', '', '', '', '', '', '', '', '', '', '', 'Y', '#', '#', '#'],
+                    ['#', '#', 'G', '', 'G', '', '', '', '', '', '', '', '', '', 'Y', '', 'Y', '#', '#'],
+                    ['#', 'G', '', 'G', '', 'G', '', '', '', '', '', '', '', 'Y', '', 'Y', '', 'Y', '#'],
+                    ['G', '', 'G', '', 'G', '', 'G', '', '', '', '', '', 'Y', '', 'Y', '', 'Y', '', 'Y'],
+                    ['#', '#', '#', '#', '#', '#', '#', '', '', '', '', '', '#', '#', '#', '#', '#', '#', '#'],
+                    ['#', '#', '#', '#', '#', '#', '#', '#', '', '', '', '#', '#', '#', '#', '#', '#', '#', '#'],
+                    ['#', '#', '#', '#', '#', '#', '#', '#', '#', '', '#', '#', '#', '#', '#', '#', '#', '#', '#']];
+            default: return [];
+        }
     }
     gameLogic.getInitialBoard = getInitialBoard;
-    /**
-     * Returns true if the game ended in a tie because there are no empty cells.
-     * E.g., isTie returns true for the following board:
-     *     [['X', 'O', 'X'],
-     *      ['X', 'O', 'O'],
-     *      ['O', 'X', 'X']]
-     */
-    function isTie(board) {
-        for (var i = 0; i < 3; i++) {
-            for (var j = 0; j < 3; j++) {
-                if (board[i][j] === '') {
-                    // If there is an empty cell then we do not have a tie.
-                    return false;
-                }
-            }
-        }
-        // No empty cells, so we have a tie!
-        return true;
-    }
     /**
      * Return the winner (either 'X' or 'O') or '' if there is no winner.
      * The board is a matrix of size 3x3 containing either 'X', 'O', or ''.
@@ -43,24 +61,51 @@ var gameLogic;
             }
         }
         var win_patterns = [
-            'XXX......',
-            '...XXX...',
-            '......XXX',
-            'X..X..X..',
-            '.X..X..X.',
-            '..X..X..X',
-            'X...X...X',
-            '..X.X.X..'
+            '#########.#########\
+       ########. .########\
+       #######. . .#######\
+       . . . . . . . . . .\
+       #. . . . . . . . .#\
+       ##. . . . . . . .##\
+       ###. . . . . . .###\
+       ##. . . . . . . .##\
+       #. . . . . . . . .#\
+       . . . R R R R . . .\
+       #######R R R#######\
+       ########R R########\
+       #########R#########',
+            '#########.#########\
+       ########. .########\
+       #######. . .#######\
+       . . . . . . G G G G\
+       #. . . . . . G G G#\
+       ##. . . . . . G G##\
+       ###. . . . . . G###\
+       ##. . . . . . . .##\
+       #. . . . . . . . .#\
+       . . . . . . . . . .\
+       #######. . .#######\
+       ########. .########\
+       #########.#########',
+            '#########.#########\
+       ########. .########\
+       #######. . .#######\
+       Y Y Y Y . . . . . .\
+       #Y Y Y . . . . . .#\
+       ##Y Y . . . . . .##\
+       ###Y . . . . . .###\
+       ##. . . . . . . .##\
+       #. . . . . . . . .#\
+       . . . . . . . . . .\
+       #######. . .#######\
+       ########. .########\
+       #########.#########'
         ];
         for (i = 0; i < win_patterns.length; i++) {
             var win_pattern = win_patterns[i];
-            var x_regexp = new RegExp(win_pattern);
-            var o_regexp = new RegExp(win_pattern.replace(/X/g, 'O'));
-            if (x_regexp.test(boardString)) {
-                return 'X';
-            }
-            if (o_regexp.test(boardString)) {
-                return 'O';
+            var regexp = new RegExp(win_pattern);
+            if (regexp.test(boardString)) {
+                return playersMap[i];
             }
         }
         return '';
@@ -69,48 +114,103 @@ var gameLogic;
      * Returns all the possible moves for the given board and turnIndexBeforeMove.
      * Returns an empty array if the game is over.
      */
-    function getPossibleMoves(board, turnIndexBeforeMove) {
+    function getPossibleMoves(board, turnIndexBeforeMove, row, col, playerNo) {
         var possibleMoves = [];
-        for (var i = 0; i < 3; i++) {
-            for (var j = 0; j < 3; j++) {
-                try {
-                    possibleMoves.push(createMove(board, i, j, turnIndexBeforeMove));
-                }
-                catch (e) {
-                }
+        var adjPosition = [[0, -2], [-1, -1], [-1, 1], [0, 2], [1, -1], [1, 1]];
+        var possibleMoveBoard = angular.copy(board);
+        for (var i = 0; i < adjPosition.length; i++) {
+            var nextRow = row + adjPosition[i][0];
+            var nextCol = col + adjPosition[i][1];
+            try {
+                possibleMoves.push(createMove(board, nextRow, nextCol, turnIndexBeforeMove, playerNo));
+                markAsVisited(possibleMoveBoard, nextRow, nextCol);
+            }
+            catch (e) {
             }
         }
+        try {
+            possibleMoves.push(getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, row, col, playerNo));
+        }
+        catch (e) { }
         return possibleMoves;
     }
     gameLogic.getPossibleMoves = getPossibleMoves;
+    /** Returns all possible moves from jumping */
+    function getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, row, col, playerNo) {
+        var possibleMoves = [];
+        for (var i = 0; i < adjPosition.length; i++) {
+            var nextRow = row + adjPosition[i][0];
+            var nextCol = col + adjPosition[i][1];
+            try {
+                if (isOccupied(board, nextRow, nextCol)) {
+                    var jumpRow = row + adjPosition[i][0] * 2;
+                    var jumpCol = col + adjPosition[i][1] * 2;
+                    possibleMoves.push(createMove(possibleMoveBoard, jumpRow, jumpCol, turnIndexBeforeMove, playerNo));
+                    markAsVisited(possibleMoveBoard, jumpRow, jumpCol);
+                    possibleMoves.push(getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, jumpRow, jumpCol, playerNo));
+                }
+            }
+            catch (e) { }
+        }
+        return possibleMoves;
+    }
+    gameLogic.getPossibleJumpMoves = getPossibleJumpMoves;
+    /** Add an '@' mark onto the board representing the position had been visited*/
+    function markAsVisited(board, row, col) {
+        board[row][col] = '@';
+    }
+    /** Check if this position is occupied by a piece */
+    function isOccupied(board, row, col) {
+        if (board[row][col] === 'R' || board[row][col] === 'G' || board[row][col] === 'Y') {
+            return true;
+        }
+        return false;
+    }
+    function replaceAll(board, replaceFrom, replaceTo) {
+        var resultBoard = angular.copy(board);
+        for (var i = 0; i < board.length; i++) {
+            for (var j = 0; j < board[0].length; j++) {
+                if (resultBoard[i][j] === replaceFrom) {
+                    resultBoard[i][j] = replaceTo;
+                }
+            }
+        }
+        return resultBoard;
+    }
     /**
      * Returns the move that should be performed when player
      * with index turnIndexBeforeMove makes a move in cell row X col.
      */
-    function createMove(board, row, col, turnIndexBeforeMove) {
+    function createMove(board, row, col, turnIndexBeforeMove, playerNo) {
         if (!board) {
             // Initially (at the beginning of the match), the board in state is undefined.
-            board = getInitialBoard();
+            board = getInitialBoard(playerNo);
+        }
+        if (!playersMap) {
+            initialPLayersMap();
+        }
+        if (row < 0 || col < 0 || row >= board.length || col >= board[0].length || board[row][col] === '#') {
+            throw new Error("Exceed board range");
         }
         if (board[row][col] !== '') {
             throw new Error("One can only make a move in an empty position!");
         }
-        if (getWinner(board) !== '' || isTie(board)) {
+        if (getWinner(board) !== '') {
             throw new Error("Can only make a move if the game is not over!");
         }
-        var boardAfterMove = angular.copy(board);
-        boardAfterMove[row][col] = turnIndexBeforeMove === 0 ? 'X' : 'O';
+        var boardAfterMove = replaceAll(board, '@', '');
+        boardAfterMove[row][col] = playersMap[turnIndexBeforeMove];
         var winner = getWinner(boardAfterMove);
         var firstOperation;
-        if (winner !== '' || isTie(boardAfterMove)) {
+        if (winner !== '') {
             // Game over.
-            firstOperation = { endMatch: { endMatchScores: winner === 'X' ? [1, 0] : winner === 'O' ? [0, 1] : [0, 0] } };
+            firstOperation = { endMatch: { endMatchScores: [winner === playersMap[0] ? 1 : 0, winner === playersMap[1] ? 1 : 0, winner === playersMap[2] ? 1 : 0] } };
         }
         else {
             // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
-            firstOperation = { setTurn: { turnIndex: 1 - turnIndexBeforeMove } };
+            firstOperation = { setTurn: { turnIndex: (turnIndexBeforeMove + 1) % playerNo } };
         }
-        var delta = { row: row, col: col };
+        var delta = { row: row, col: col, playerNo: playerNo };
         return [firstOperation,
             { set: { key: 'board', value: boardAfterMove } },
             { set: { key: 'delta', value: delta } }];
@@ -134,7 +234,8 @@ var gameLogic;
             var row = deltaValue.row;
             var col = deltaValue.col;
             var board = stateBeforeMove.board;
-            var expectedMove = createMove(board, row, col, turnIndexBeforeMove);
+            var playerNo = deltaValue.playerNo;
+            var expectedMove = createMove(board, row, col, turnIndexBeforeMove, playerNo);
             if (!angular.equals(move, expectedMove)) {
                 return false;
             }

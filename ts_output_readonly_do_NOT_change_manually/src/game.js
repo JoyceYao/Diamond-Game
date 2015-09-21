@@ -39,7 +39,7 @@ var game;
         animationEnded = false;
         state = params.stateAfterMove;
         if (!state.board) {
-            state.board = gameLogic.getInitialBoard();
+            state.board = gameLogic.getInitialBoard(state.delta.playerNo);
         }
         canMakeMove = params.turnIndexAfterMove >= 0 &&
             params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
@@ -70,7 +70,7 @@ var game;
             return;
         }
         try {
-            var move = gameLogic.createMove(state.board, row, col, turnIndex);
+            var move = gameLogic.createMove(state.board, row, col, turnIndex, state.delta.playerNo);
             canMakeMove = false; // to prevent making another move
             gameService.makeMove(move);
         }
