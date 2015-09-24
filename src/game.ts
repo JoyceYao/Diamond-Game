@@ -11,7 +11,7 @@ module game {
     resizeGameAreaService.setWidthToHeight(1);
     gameService.setGame({
       minNumberOfPlayers: 2,
-      maxNumberOfPlayers: 2,
+      maxNumberOfPlayers: 3,
       isMoveOk: gameLogic.isMoveOk,
       updateUI: updateUI
     });
@@ -104,6 +104,7 @@ module game {
         state.delta.row === row && state.delta.col === col;
   }
 }
+
 
 angular.module('myApp', ['ngTouch', 'ui.bootstrap'])
   .run(['initGameServices', function (initGameServices: any) {
