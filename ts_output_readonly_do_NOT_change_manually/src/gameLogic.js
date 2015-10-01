@@ -1,5 +1,4 @@
 var playersMap = {};
-//var playersMap = { 0:'R', 1:'G', 2:'Y' };
 var gameLogic;
 (function (gameLogic) {
     /** Map playerIdx with player color */
@@ -7,7 +6,6 @@ var gameLogic;
         playersMap[0] = 'R';
         playersMap[1] = 'G';
         playersMap[2] = 'Y';
-        //console.log("initialPLayersMap playersMap[0]=" + playersMap[0]);
     }
     /** Returns the initial TicTacToe board, which is a 3x3 matrix containing ''.  */
     function getInitialBoard(playerNo) {
@@ -40,7 +38,7 @@ var gameLogic;
                     ['#', '#', '#', '#', '#', '#', '#', 'R', '', 'R', '', 'R', '#', '#', '#', '#', '#', '#', '#'],
                     ['#', '#', '#', '#', '#', '#', '#', '#', 'R', '', 'R', '#', '#', '#', '#', '#', '#', '#', '#'],
                     ['#', '#', '#', '#', '#', '#', '#', '#', '#', 'R', '#', '#', '#', '#', '#', '#', '#', '#', '#']];
-            default: return [];
+            default: throw new Error("illegal Player Number: expect 2 or 3");
         }
     }
     gameLogic.getInitialBoard = getInitialBoard;
@@ -101,12 +99,12 @@ var gameLogic;
                 '########. .########' +
                 '#########.#########'
         ];
-        console.log("getWinner boardString=" + boardString);
+        //console.log("getWinner boardString="+ boardString);
         for (i = 0; i < win_patterns.length; i++) {
             var win_pattern = win_patterns[i];
-            console.log("getWinner win_pattern=" + win_pattern);
+            //console.log("getWinner win_pattern="+ win_pattern);
             var regexp = new RegExp(win_pattern);
-            console.log("getWinner test=" + regexp.test(boardString));
+            //console.log("getWinner test="+ regexp.test(boardString));
             if (regexp.test(boardString)) {
                 return playersMap[i];
             }
@@ -124,7 +122,7 @@ var gameLogic;
         for (var i = 0; i < adjPosition.length; i++) {
             var nextRow = delta.rowS + adjPosition[i][0];
             var nextCol = delta.colS + adjPosition[i][1];
-            var nextDalta = { rowS: delta.rowE, colS: delta.colE, rowE: nextRow, colE: nextCol, playerNo: delta.playerNo };
+            var nextDalta = { rowS: delta.rowS, colS: delta.colS, rowE: nextRow, colE: nextCol, playerNo: delta.playerNo };
             try {
                 possibleMoves.push(createMove(board, turnIndexBeforeMove, nextDalta));
                 markAsVisited(possibleMoveBoard, nextRow, nextCol);
@@ -133,17 +131,21 @@ var gameLogic;
             }
         }
         try {
-            possibleMoves.push(getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta));
+            var jumpMoves = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta);
+            if (jumpMoves) {
+                possibleMoves.push.apply(possibleMoves, jumpMoves);
+            }
         }
         catch (e) { }
+        console.log("getPossibleMoves possibleMoves[2]=" + JSON.stringify(possibleMoves));
         return possibleMoves;
     }
     gameLogic.getPossibleMoves = getPossibleMoves;
     /** Returns all possible moves from jumping move*/
     function getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta) {
         var possibleMoves = [];
-        var rowS = delta.rowS;
-        var colS = delta.colS;
+        var rowS = delta.rowE;
+        var colS = delta.colE;
         for (var i = 0; i < adjPosition.length; i++) {
             var nextRow = rowS + adjPosition[i][0];
             var nextCol = colS + adjPosition[i][1];
@@ -151,14 +153,21 @@ var gameLogic;
                 if (isOccupied(board, nextRow, nextCol)) {
                     var jumpRow = rowS + adjPosition[i][0] * 2;
                     var jumpCol = colS + adjPosition[i][1] * 2;
-                    var nextDelta = { rowS: delta.rowE, colS: delta.colE, rowE: jumpRow, colE: jumpCol, playerNo: delta.playerNo };
-                    possibleMoves.push(createMove(possibleMoveBoard, turnIndexBeforeMove, nextDelta));
-                    markAsVisited(possibleMoveBoard, jumpRow, jumpCol);
-                    possibleMoves.push(getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDelta));
+                    var nextDelta = { rowS: rowS, colS: colS, rowE: jumpRow, colE: jumpCol, playerNo: delta.playerNo };
+                    var move = createMove(possibleMoveBoard, turnIndexBeforeMove, nextDelta);
+                    if (move) {
+                        possibleMoves.push(move);
+                        markAsVisited(possibleMoveBoard, jumpRow, jumpCol);
+                        var nextMove = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDelta);
+                        if (nextMove.length > 0) {
+                            possibleMoves.push(nextMove);
+                        }
+                    }
                 }
             }
             catch (e) { }
         }
+        console.log("getPossibleJumpMoves possibleMoves[2]=" + JSON.stringify(possibleMoves));
         return possibleMoves;
     }
     gameLogic.getPossibleJumpMoves = getPossibleJumpMoves;
@@ -189,18 +198,17 @@ var gameLogic;
      * with index turnIndexBeforeMove makes a move in cell row X col.
      */
     function createMove(board, turnIndexBeforeMove, delta) {
+        if (!board) {
+            // Initially (at the beginning of the match), the board in state is undefined.
+            //board = getInitialBoard(playerNo);
+            throw new Error("Board doesn't initial normally");
+        }
         var rowS = delta.rowS;
         var colS = delta.colS;
         var rowE = delta.rowE;
         var colE = delta.colE;
         var playerNo = delta.playerNo;
-        if (!board) {
-            // Initially (at the beginning of the match), the board in state is undefined.
-            board = getInitialBoard(playerNo);
-        }
-        console.log("createMove playersMap=" + JSON.stringify(playersMap));
         if (!playersMap[turnIndexBeforeMove]) {
-            console.log("createMove playersMap=");
             initialPLayersMap();
         }
         if (rowS < 0 || colS < 0 || rowS >= board.length || colS >= board[0].length ||
@@ -217,9 +225,6 @@ var gameLogic;
         var boardAfterMove = replaceAll(board, '@', '');
         boardAfterMove[rowS][colS] = '';
         boardAfterMove[rowE][colE] = playersMap[turnIndexBeforeMove];
-        console.log("turnIndexBeforeMove=" + turnIndexBeforeMove);
-        console.log("createMove playersMap=" + JSON.stringify(playersMap));
-        console.log("playersMap[turnIndexBeforeMove]=" + playersMap[turnIndexBeforeMove]);
         var winner = getWinner(boardAfterMove);
         var firstOperation;
         if (winner !== '') {
@@ -230,9 +235,6 @@ var gameLogic;
             // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
             firstOperation = { setTurn: { turnIndex: (turnIndexBeforeMove + 1) % playerNo } };
         }
-        console.log("createMove firstOperation=" + JSON.stringify(firstOperation));
-        console.log("createMove boardAfterMove=" + boardAfterMove);
-        console.log("createMove delta=" + delta);
         return [firstOperation,
             { set: { key: 'board', value: boardAfterMove } },
             { set: { key: 'delta', value: delta } }];
@@ -257,19 +259,14 @@ var gameLogic;
             var board = stateBeforeMove.board;
             var playerNo = deltaValue.playerNo;
             var expectedMove = createMove(board, turnIndexBeforeMove, deltaValue);
-            console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
-            console.log("isMoveOk move=" + JSON.stringify(move));
             if (!angular.equals(move, expectedMove)) {
-                console.log("return false");
                 return false;
             }
         }
         catch (e) {
-            console.log("isMoveOk Exception");
             // if there are any exceptions then the move is illegal
             return false;
         }
-        console.log("return true");
         return true;
     }
     gameLogic.isMoveOk = isMoveOk;
