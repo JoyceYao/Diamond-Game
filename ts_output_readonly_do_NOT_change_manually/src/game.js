@@ -11,7 +11,7 @@ var game;
         resizeGameAreaService.setWidthToHeight(1);
         gameService.setGame({
             minNumberOfPlayers: 2,
-            maxNumberOfPlayers: 2,
+            maxNumberOfPlayers: 3,
             isMoveOk: gameLogic.isMoveOk,
             updateUI: updateUI
         });
@@ -70,7 +70,8 @@ var game;
             return;
         }
         try {
-            var move = gameLogic.createMove(state.board, row, col, turnIndex, state.delta.playerNo);
+            var delta = { rowS: row, colS: col, rowE: 0, colE: 0, playerNo: state.delta.playerNo };
+            var move = gameLogic.createMove(state.board, turnIndex, delta);
             canMakeMove = false; // to prevent making another move
             gameService.makeMove(move);
         }
@@ -96,7 +97,7 @@ var game;
     function shouldSlowlyAppear(row, col) {
         return !animationEnded &&
             state.delta &&
-            state.delta.row === row && state.delta.col === col;
+            state.delta.rowE === row && state.delta.colE === col;
     }
     game.shouldSlowlyAppear = shouldSlowlyAppear;
 })(game || (game = {}));

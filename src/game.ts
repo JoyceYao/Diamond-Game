@@ -76,7 +76,8 @@ module game {
       return;
     }
     try {
-      var move = gameLogic.createMove(state.board, row, col, turnIndex, state.delta.playerNo);
+      var delta: BoardDelta = {rowS:row, colS:col, rowE:0, colE:0, playerNo:state.delta.playerNo}
+      var move = gameLogic.createMove(state.board, turnIndex, delta);
       canMakeMove = false; // to prevent making another move
       gameService.makeMove(move);
     } catch (e) {
@@ -101,7 +102,7 @@ module game {
   export function shouldSlowlyAppear(row: number, col: number): boolean {
     return !animationEnded &&
         state.delta &&
-        state.delta.row === row && state.delta.col === col;
+        state.delta.rowE === row && state.delta.colE === col;
   }
 }
 
