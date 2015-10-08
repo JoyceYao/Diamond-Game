@@ -155,7 +155,7 @@ module gameLogic {
       if(jumpMoves){ possibleMoves.push.apply(possibleMoves, jumpMoves); }
     } catch (e) {}
 
-    console.log("getPossibleMoves possibleMoves[2]=" + JSON.stringify(possibleMoves));
+    //console.log("getPossibleMoves possibleMoves[2]=" + JSON.stringify(possibleMoves));
     return possibleMoves;
   }
 
@@ -183,7 +183,7 @@ module gameLogic {
         }
       } catch (e){  }
     }
-    console.log("getPossibleJumpMoves possibleMoves[2]=" + JSON.stringify(possibleMoves));
+    //console.log("getPossibleJumpMoves possibleMoves[2]=" + JSON.stringify(possibleMoves));
     return possibleMoves;
   }
 

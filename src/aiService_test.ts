@@ -1,5 +1,5 @@
 describe("aiService", function() {
-  
+
   it("R finds an immediate winning move", function() {
     var move = aiService.createComputerMove(
       [['#', '#', '#', '#', '#', '#', '#', '#', '#', 'R', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
