@@ -27,7 +27,6 @@ module aiService {
     var bestDelta : BoardDelta;
     var deltaList : BoardDelta[] = [];
     var stateList = getBoardListAfterNSteps(board, deltaList, steps, playerNo, playerIndex);
-    var targetRow = getTargetPosi(board, playerIndex);
 
     /* for each move result, calculate the distance reduced by the movement,
       choose the move that reduce the most distance */
@@ -90,6 +89,13 @@ module aiService {
     return result;
   }
 
+  /* calculate the row diff in this move */
+  function getRowDiff(rowS: number, colS: number, rowE: number, colE: number, playerIndex: number): number {
+    var startRow : number = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
+    var endRow : number = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
+    return startRow-endRow;
+  }
+
   /* representing the prefer move direction for each player, 9-12 -> start area, 0-3 -> target area */
   var rowNoByPlayer: string[][][] =
    [[['#', '#', '#', '#', '#', '#', '#', '#', '#', '0', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
@@ -134,31 +140,4 @@ module aiService {
      ['#', '#', '#', '#', '#', '#', '#', '#', '6', '', '5', '#', '#', '#', '#', '#', '#', '#', '#'],
      ['#', '#', '#', '#', '#', '#', '#', '#', '#', '6', '#', '#', '#', '#', '#', '#', '#', '#', '#']]]
 
-  /* list all target positions for each player */
-  var targetPositions : number[][][] =
-    [[[0,9],[1,8],[1,10],[2,7],[2,9],[2,11],[3,8],[3,10],[3,12],[3,14]],
-     [[9,0],[8,1],[9,2],[7,2],[8,3],[9,4],[6,3],[7,4],[8,5],[9,6]],
-     [[9,18],[8,17],[9,16],[7,16],[8,15],[9,14],[6,15],[7,14],[8,13],[9,12]]]
-
-  /* calculate the row diff in this move */
-  function getRowDiff(rowS: number, colS: number, rowE: number, colE: number, playerIndex: number): number {
-    var startRow : number = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
-    var endRow : number = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
-    return startRow-endRow;
-  }
-
-  /* find the first empty position in target positions and return the row number */
-  function getTargetPosi (board: Board, playerIndex: number): number {
-    var targets : number[][] = targetPositions[playerIndex];
-    var thisColor = playersMap[playerIndex];
-    var targetRow = 0;
-    var targetCol = 0;
-    for(var i = 0; i<targets.length; i++){
-      if(board[targets[i][0]][targets[i][1]] == thisColor){ continue; }
-      targetRow = targets[i][0];
-      targetCol = targets[i][1];
-      break;
-    }
-    return parseInt(rowNoByPlayer[playerIndex][targetRow][targetCol]);
-  }
 }

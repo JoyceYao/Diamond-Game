@@ -117,7 +117,6 @@ module gameLogic {
       '#########.#########'
     ];
 
-    //console.log("getWinner boardString="+ boardString);
     for (i = 0; i < win_patterns.length; i++) {
       var win_pattern = win_patterns[i];
       //console.log("getWinner win_pattern="+ win_pattern);
@@ -215,7 +214,6 @@ module gameLogic {
       board: Board, turnIndexBeforeMove: number, delta: BoardDelta): IMove {
     if (!board) {
       // Initially (at the beginning of the match), the board in state is undefined.
-      //board = getInitialBoard(playerNo);
       throw new Error("Board doesn't initial normally");
     }
 
