@@ -21,7 +21,8 @@ var aiService;
         var maxDist = 0;
         var bestDelta;
         var deltaList = [];
-        var stateList = getBoardListAfterNSteps(board, deltaList, steps, playerNo, playerIndex);
+        var myPieces = getMyPiecePosition(board, playerIndex);
+        var stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
         /* for each move result, calculate the distance reduced by the movement,
           choose the move that reduce the most distance */
         for (var i = 0; i < stateList.length; i++) {
@@ -42,12 +43,11 @@ var aiService;
         return myMove;
     }
     /* return the final board state and movement history by N steps */
-    function getBoardListAfterNSteps(board, deltaList, steps, playerNo, playerIndex) {
+    function getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex) {
         if (steps == 0) {
             return [{ board: board, deltaList: angular.copy(deltaList) }];
         }
         var result = [];
-        var myPieces = getMyPiecePosition(board, playerIndex);
         for (var i = 0; i < myPieces.length; i++) {
             var row = myPieces[i][0];
             var col = myPieces[i][1];
@@ -60,8 +60,11 @@ var aiService;
                 if (getRowDiff(nextDelta.rowS, nextDelta.colS, nextDelta.rowE, nextDelta.colE, playerIndex) < 0) {
                     continue;
                 }
+                var nextMyPieces = angular.copy(myPieces);
+                nextMyPieces.splice(i, 1);
+                nextMyPieces.push([nextDelta.rowE, nextDelta.colE]);
                 deltaList.push(nextDelta);
-                var thisResult = getBoardListAfterNSteps(nextBoard, deltaList, steps - 1, playerNo, playerIndex);
+                var thisResult = getBoardListAfterNSteps(nextBoard, deltaList, nextMyPieces, steps - 1, playerNo, playerIndex);
                 if (thisResult) {
                     result.push.apply(result, thisResult);
                 }
