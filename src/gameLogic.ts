@@ -154,7 +154,6 @@ module gameLogic {
       var jumpMoves = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta, delta.rowS, delta.colS);
       if(jumpMoves){ possibleMoves.push.apply(possibleMoves, jumpMoves); }
     } catch (e) {}
-
     //console.log("getPossibleMoves possibleMoves[2]=" + JSON.stringify(possibleMoves));
     return possibleMoves;
   }

@@ -15,56 +15,35 @@ var aiService;
         return getBestMove(board, steps, playerNo, playerIndex);
     }
     aiService.createComputerMove = createComputerMove;
-    /*
-      function getStateScoreForIndex0(move: IMove, playerIndex: number): number {
-        if (move[0].endMatch) {
-          var endMatchScores = move[0].endMatch.endMatchScores;
-          return endMatchScores[0] > endMatchScores[1] ? Number.POSITIVE_INFINITY
-              : endMatchScores[0] < endMatchScores[1] ? Number.NEGATIVE_INFINITY
-              : 0;
-        }
-        return 0;
-      }
-    
-      function getNextStates(move: IMove, playerIndex: number): IMove[] {
-        return gameLogic.getPossibleMoves(move[1].set.value, playerIndex);
-      }
-    
-      function getDebugStateToString(move: IMove): string {
-        return "\n" + move[1].set.value.join("\n") + "\n";
-      }*/
     function getBestMove(board, steps, playerNo, playerIndex) {
         gameLogic.initialPLayersMap();
-        var maxDist = 0; // The distance that reduced, the larger the better
+        // The distance that reduced, the larger the better
+        var maxDist = 0;
         var bestDelta;
         var deltaList = [];
-        var stateList = getBoardListAfterNSteps(board, deltaList, playerNo, playerIndex, steps);
+        var stateList = getBoardListAfterNSteps(board, deltaList, steps, playerNo, playerIndex);
         var targetRow = getTargetPosi(board, playerIndex);
+        /* for each move result, calculate the distance reduced by the movement,
+          choose the move that reduce the most distance */
         for (var i = 0; i < stateList.length; i++) {
             var thisDist = 0;
             var thisBoard = stateList[i].board;
             var thisDeltaList = stateList[i].deltaList;
-            //var myPieces = getMyPiecePosition(thisBoard, playerIndex);
-            //  console.log("getBestMove myPieces=" + JSON.stringify(myPieces));
             for (var j = 0; j < thisDeltaList.length; j++) {
-                //var dist = getDistToTarget(thisBoard, targetRow, myPieces[j][0], myPieces[j][1], playerIndex);
                 var thisDelta = thisDeltaList[j];
                 var dist = getRowDiff(thisDelta.rowS, thisDelta.colS, thisDelta.rowE, thisDelta.colE, playerIndex);
-                //console.log("getBestMove dist=" + dist);
                 thisDist += dist;
             }
-            //console.log("getBestMove thisDist=" + thisDist + " maxDist="+maxDist);
             if (thisDist > maxDist) {
                 maxDist = thisDist;
                 bestDelta = thisDeltaList[0];
             }
         }
-        //console.log("getBestMove bestDelta=" + JSON.stringify(bestDelta));
         var myMove = gameLogic.createMove(board, playerIndex, bestDelta);
-        //console.log("getBestMove=" + JSON.stringify(myMove));
         return myMove;
     }
-    function getBoardListAfterNSteps(board, deltaList, playerNo, playerIndex, steps) {
+    /* return the final board state and movement history by N steps */
+    function getBoardListAfterNSteps(board, deltaList, steps, playerNo, playerIndex) {
         if (steps == 0) {
             return [{ board: board, deltaList: angular.copy(deltaList) }];
         }
@@ -73,31 +52,27 @@ var aiService;
         for (var i = 0; i < myPieces.length; i++) {
             var row = myPieces[i][0];
             var col = myPieces[i][1];
-            //console.log("myPieces= " + row + " " + col);
             var allMoves = gameLogic.getPossibleMoves(board, playerIndex, { rowS: row, colS: col, rowE: row, colE: col, playerNo: playerNo });
             for (var j = 0; j < allMoves.length; j++) {
                 var thisMove = allMoves[j];
-                //console.log("thisMove " + j + "= " + JSON.stringify(thisMove));
-                //console.log("thisMove[1]=" + JSON.stringify(thisMove[1]));
-                //console.log("thisMove[2]=" + JSON.stringify(thisMove[2]));
                 var nextBoard = thisMove[1].set.value;
                 var nextDelta = thisMove[2].set.value;
-                //console.log("nextDelta=" + JSON.stringify(nextDelta));
-                //console.log("deltaList=" + JSON.stringify(deltaList));
                 // if go backward, don't consider next step
                 if (getRowDiff(nextDelta.rowS, nextDelta.colS, nextDelta.rowE, nextDelta.colE, playerIndex) < 0) {
                     continue;
                 }
                 deltaList.push(nextDelta);
-                var thisResult = getBoardListAfterNSteps(nextBoard, deltaList, playerNo, playerIndex, steps - 1);
+                var thisResult = getBoardListAfterNSteps(nextBoard, deltaList, steps - 1, playerNo, playerIndex);
                 if (thisResult) {
                     result.push.apply(result, thisResult);
                 }
-                deltaList.splice(-1, 1); // remove last element
+                // remove last element for next recursion
+                deltaList.splice(-1, 1);
             }
         }
         return result;
     }
+    /* return the location of all pieces of this player */
     function getMyPiecePosition(board, playerIndex) {
         var myColor = playersMap[playerIndex];
         var result = [];
@@ -110,60 +85,57 @@ var aiService;
         }
         return result;
     }
+    /* representing the prefer move direction for each player, 9-12 -> start area, 0-3 -> target area */
     var rowNoByPlayer = [[['#', '#', '#', '#', '#', '#', '#', '#', '#', '0', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
             ['#', '#', '#', '#', '#', '#', '#', '#', '1', '', '1', '#', '#', '#', '#', '#', '#', '#', '#'],
             ['#', '#', '#', '#', '#', '#', '#', '2', '', '2', '', '2', '#', '#', '#', '#', '#', '#', '#'],
-            ['3', '', '3', '', '3', '', '3', '', '3', '', '3', '', '3', '', '3', '', '3', '', '3'],
-            ['#', '4', '', '4', '', '4', '', '4', '', '4', '', '4', '', '4', '', '4', '', '4', '#'],
-            ['#', '#', '5', '', '5', '', '5', '', '5', '', '5', '', '5', '', '5', '', '5', '#', '#'],
+            ['6', '', '5', '', '4', '', '3', '', '3', '', '3', '', '3', '', '4', '', '5', '', '6'],
+            ['#', '6', '', '5', '', '4', '', '4', '', '4', '', '4', '', '4', '', '5', '', '6', '#'],
+            ['#', '#', '6', '', '5', '', '5', '', '5', '', '5', '', '5', '', '5', '', '6', '#', '#'],
             ['#', '#', '#', '6', '', '6', '', '6', '', '6', '', '6', '', '6', '', '6', '#', '#', '#'],
-            ['#', '#', '7', '', '7', '', '7', '', '7', '', '7', '', '7', '', '7', '', '7', '#', '#'],
-            ['#', '8', '', '8', '', '8', '', '8', '', '8', '', '8', '', '8', '', '8', '', '8', '#'],
-            ['9', '', '9', '', '9', '', '9', '', '9', '', '9', '', '9', '', '9', '', '9', '', '9'],
+            ['#', '#', '8', '', '7', '', '7', '', '7', '', '7', '', '7', '', '7', '', '8', '#', '#'],
+            ['#', '10', '', '9', '', '8', '', '8', '', '8', '', '8', '', '8', '', '9', '', '10', '#'],
+            ['12', '', '11', '', '10', '', '9', '', '9', '', '9', '', '9', '', '10', '', '11', '', '12'],
             ['#', '#', '#', '#', '#', '#', '#', '10', '', '10', '', '10', '#', '#', '#', '#', '#', '#', '#'],
             ['#', '#', '#', '#', '#', '#', '#', '#', '11', '', '11', '#', '#', '#', '#', '#', '#', '#', '#'],
             ['#', '#', '#', '#', '#', '#', '#', '#', '#', '12', '#', '#', '#', '#', '#', '#', '#', '#', '#']],
-        [['#', '#', '#', '#', '#', '#', '#', '#', '#', '9', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
-            ['#', '#', '#', '#', '#', '#', '#', '#', '8', '', '9', '#', '#', '#', '#', '#', '#', '#', '#'],
-            ['#', '#', '#', '#', '#', '#', '#', '7', '', '8', '', '9', '#', '#', '#', '#', '#', '#', '#'],
-            ['3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '', '12'],
-            ['#', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '#'],
-            ['#', '#', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '#', '#'],
+        [['#', '#', '#', '#', '#', '#', '#', '#', '#', '12', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
+            ['#', '#', '#', '#', '#', '#', '#', '#', '10', '', '11', '#', '#', '#', '#', '#', '#', '#', '#'],
+            ['#', '#', '#', '#', '#', '#', '#', '8', '', '9', '', '10', '#', '#', '#', '#', '#', '#', '#'],
+            ['6', '', '6', '', '6', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '', '12'],
+            ['#', '5', '', '5', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '#'],
+            ['#', '#', '4', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '#', '#'],
             ['#', '#', '#', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '#', '#', '#'],
-            ['#', '#', '2', '', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '#', '#'],
-            ['#', '1', '', '2', '', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '#'],
-            ['0', '', '1', '', '2', '', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9'],
-            ['#', '#', '#', '#', '#', '#', '#', '3', '', '4', '', '5', '#', '#', '#', '#', '#', '#', '#'],
-            ['#', '#', '#', '#', '#', '#', '#', '#', '3', '', '4', '#', '#', '#', '#', '#', '#', '#', '#'],
-            ['#', '#', '#', '#', '#', '#', '#', '#', '#', '3', '#', '#', '#', '#', '#', '#', '#', '#', '#']],
-        [['#', '#', '#', '#', '#', '#', '#', '#', '#', '9', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
-            ['#', '#', '#', '#', '#', '#', '#', '#', '9', '', '8', '#', '#', '#', '#', '#', '#', '#', '#'],
-            ['#', '#', '#', '#', '#', '#', '#', '9', '', '8', '', '7', '#', '#', '#', '#', '#', '#', '#'],
-            ['12', '', '11', '', '10', '', '9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3'],
-            ['#', '11', '', '10', '', '9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3', '#'],
-            ['#', '#', '10', '', '9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3', '#', '#'],
+            ['#', '#', '2', '', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '10', '#', '#'],
+            ['#', '1', '', '2', '', '3', '', '4', '', '5', '', '6', '', '7', '', '9', '', '11', '#'],
+            ['0', '', '1', '', '2', '', '3', '', '4', '', '5', '', '6', '', '8', '', '10', '', '12'],
+            ['#', '#', '#', '#', '#', '#', '#', '4', '', '5', '', '6', '#', '#', '#', '#', '#', '#', '#'],
+            ['#', '#', '#', '#', '#', '#', '#', '#', '5', '', '6', '#', '#', '#', '#', '#', '#', '#', '#'],
+            ['#', '#', '#', '#', '#', '#', '#', '#', '#', '6', '#', '#', '#', '#', '#', '#', '#', '#', '#']],
+        [['#', '#', '#', '#', '#', '#', '#', '#', '#', '12', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
+            ['#', '#', '#', '#', '#', '#', '#', '#', '11', '', '10', '#', '#', '#', '#', '#', '#', '#', '#'],
+            ['#', '#', '#', '#', '#', '#', '#', '10', '', '9', '', '8', '#', '#', '#', '#', '#', '#', '#'],
+            ['12', '', '11', '', '10', '', '9', '', '8', '', '7', '', '6', '', '6', '', '6', '', '6'],
+            ['#', '11', '', '10', '', '9', '', '8', '', '7', '', '6', '', '5', '', '5', '', '5', '#'],
+            ['#', '#', '10', '', '9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '4', '#', '#'],
             ['#', '#', '#', '9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3', '#', '#', '#'],
-            ['#', '#', '9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3', '', '2', '#', '#'],
-            ['#', '9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3', '', '2', '', '1', '#'],
-            ['9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3', '', '2', '', '1', '', '0'],
-            ['#', '#', '#', '#', '#', '#', '#', '5', '', '4', '', '3', '#', '#', '#', '#', '#', '#', '#'],
-            ['#', '#', '#', '#', '#', '#', '#', '#', '4', '', '3', '#', '#', '#', '#', '#', '#', '#', '#'],
-            ['#', '#', '#', '#', '#', '#', '#', '#', '#', '3', '#', '#', '#', '#', '#', '#', '#', '#', '#']]];
+            ['#', '#', '10', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3', '', '2', '#', '#'],
+            ['#', '11', '', '9', '', '7', '', '6', '', '5', '', '4', '', '3', '', '2', '', '1', '#'],
+            ['12', '', '10', '', '8', '', '6', '', '5', '', '4', '', '3', '', '2', '', '1', '', '0'],
+            ['#', '#', '#', '#', '#', '#', '#', '6', '', '5', '', '4', '#', '#', '#', '#', '#', '#', '#'],
+            ['#', '#', '#', '#', '#', '#', '#', '#', '6', '', '5', '#', '#', '#', '#', '#', '#', '#', '#'],
+            ['#', '#', '#', '#', '#', '#', '#', '#', '#', '6', '#', '#', '#', '#', '#', '#', '#', '#', '#']]];
+    /* list all target positions for each player */
     var targetPositions = [[[0, 9], [1, 8], [1, 10], [2, 7], [2, 9], [2, 11], [3, 8], [3, 10], [3, 12], [3, 14]],
         [[9, 0], [8, 1], [9, 2], [7, 2], [8, 3], [9, 4], [6, 3], [7, 4], [8, 5], [9, 6]],
         [[9, 18], [8, 17], [9, 16], [7, 16], [8, 15], [9, 14], [6, 15], [7, 14], [8, 13], [9, 12]]];
+    /* calculate the row diff in this move */
     function getRowDiff(rowS, colS, rowE, colE, playerIndex) {
         var startRow = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
         var endRow = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
-        //console.log("getRowDiff rowS=" + rowS + " colS=" + colS + " rowE=" + rowE + " colE=" + colE);
-        //console.log("getRowDiff startRow=" + startRow + " endRow=" + endRow);
         return startRow - endRow;
     }
-    function getDistToTarget(board, targetRow, row, col, playerIndex) {
-        var rowNoFromTarget = rowNoByPlayer[playerIndex];
-        var dist = parseInt(rowNoFromTarget[row][col]) - targetRow;
-        return dist > 0 ? dist : 0;
-    }
+    /* find the first empty position in target positions and return the row number */
     function getTargetPosi(board, playerIndex) {
         var targets = targetPositions[playerIndex];
         var thisColor = playersMap[playerIndex];
