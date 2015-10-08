@@ -7,6 +7,7 @@ var gameLogic;
         playersMap[1] = 'G';
         playersMap[2] = 'Y';
     }
+    gameLogic.initialPLayersMap = initialPLayersMap;
     /** Returns the initial TicTacToe board, which is a 3x3 matrix containing ''.  */
     function getInitialBoard(playerNo) {
         switch (playerNo) {
@@ -131,7 +132,7 @@ var gameLogic;
             }
         }
         try {
-            var jumpMoves = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta);
+            var jumpMoves = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta, delta.rowS, delta.colS);
             if (jumpMoves) {
                 possibleMoves.push.apply(possibleMoves, jumpMoves);
             }
@@ -142,7 +143,7 @@ var gameLogic;
     }
     gameLogic.getPossibleMoves = getPossibleMoves;
     /** Returns all possible moves from jumping move*/
-    function getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta) {
+    function getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta, originalRow, originalCol) {
         var possibleMoves = [];
         var rowS = delta.rowE;
         var colS = delta.colE;
@@ -153,14 +154,14 @@ var gameLogic;
                 if (isOccupied(board, nextRow, nextCol)) {
                     var jumpRow = rowS + adjPosition[i][0] * 2;
                     var jumpCol = colS + adjPosition[i][1] * 2;
-                    var nextDelta = { rowS: rowS, colS: colS, rowE: jumpRow, colE: jumpCol, playerNo: delta.playerNo };
+                    var nextDelta = { rowS: originalRow, colS: originalCol, rowE: jumpRow, colE: jumpCol, playerNo: delta.playerNo };
                     var move = createMove(possibleMoveBoard, turnIndexBeforeMove, nextDelta);
                     if (move) {
                         possibleMoves.push(move);
                         markAsVisited(possibleMoveBoard, jumpRow, jumpCol);
-                        var nextMove = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDelta);
+                        var nextMove = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDelta, originalRow, originalCol);
                         if (nextMove.length > 0) {
-                            possibleMoves.push(nextMove);
+                            possibleMoves.push.apply(possibleMoves, nextMove);
                         }
                     }
                 }

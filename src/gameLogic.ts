@@ -10,11 +10,12 @@ interface IState {
   board?: Board;
   delta?: BoardDelta;
 }
+
 var playersMap : { [key:number]:string; } = {};
 
 module gameLogic {
   /** Map playerIdx with player color */
-  function initialPLayersMap(): void {
+  export function initialPLayersMap(): void {
     playersMap[0] = 'R';
     playersMap[1] = 'G';
     playersMap[2] = 'Y';
@@ -150,7 +151,7 @@ module gameLogic {
     }
 
     try {
-      var jumpMoves = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta);
+      var jumpMoves = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta, delta.rowS, delta.colS);
       if(jumpMoves){ possibleMoves.push.apply(possibleMoves, jumpMoves); }
     } catch (e) {}
 
@@ -160,7 +161,7 @@ module gameLogic {
 
   /** Returns all possible moves from jumping move*/
   export function getPossibleJumpMoves(board: Board, possibleMoveBoard: Board,
-    adjPosition: number[][], turnIndexBeforeMove: number, delta: BoardDelta): IMove[]{
+    adjPosition: number[][], turnIndexBeforeMove: number, delta: BoardDelta, originalRow: number, originalCol: number): IMove[]{
     var possibleMoves: IMove[] = [];
     var rowS= delta.rowE;
     var colS = delta.colE;
@@ -171,13 +172,13 @@ module gameLogic {
         if(isOccupied(board, nextRow, nextCol)){
           var jumpRow: number = rowS+adjPosition[i][0]*2;
           var jumpCol: number = colS+adjPosition[i][1]*2;
-          var nextDelta: BoardDelta = {rowS:rowS, colS:colS, rowE:jumpRow, colE:jumpCol, playerNo:delta.playerNo};
+          var nextDelta: BoardDelta = {rowS:originalRow, colS:originalCol, rowE:jumpRow, colE:jumpCol, playerNo:delta.playerNo};
           var move = createMove(possibleMoveBoard, turnIndexBeforeMove, nextDelta);
           if(move) {
             possibleMoves.push(move);
             markAsVisited(possibleMoveBoard, jumpRow, jumpCol);
-            var nextMove = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDelta);
-            if(nextMove.length > 0) { possibleMoves.push(nextMove); }
+            var nextMove = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDelta, originalRow, originalCol);
+            if(nextMove.length > 0) { possibleMoves.push.apply(possibleMoves, nextMove); }
           }
         }
       } catch (e){  }
