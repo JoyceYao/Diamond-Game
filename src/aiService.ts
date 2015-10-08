@@ -62,7 +62,7 @@ module aiService {
         var thisMove = allMoves[j];
         var nextBoard = thisMove[1].set.value;
         var nextDelta = thisMove[2].set.value;
-        // if go backward, don't consider next step
+        // if the move is going backward, don't consider next step
         if(getRowDiff(nextDelta.rowS, nextDelta.colS, nextDelta.rowE, nextDelta.colE, playerIndex) < 0){ continue; }
 
         var nextMyPieces = angular.copy(myPieces);

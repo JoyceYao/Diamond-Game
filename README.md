@@ -1,4 +1,4 @@
-TicTacToe
+Diamond Game
 =========
 
-TicTacToe game
+Diamond game

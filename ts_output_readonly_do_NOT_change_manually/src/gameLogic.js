@@ -102,9 +102,7 @@ var gameLogic;
         ];
         for (i = 0; i < win_patterns.length; i++) {
             var win_pattern = win_patterns[i];
-            //console.log("getWinner win_pattern="+ win_pattern);
             var regexp = new RegExp(win_pattern);
-            //console.log("getWinner test="+ regexp.test(boardString));
             if (regexp.test(boardString)) {
                 return playersMap[i];
             }

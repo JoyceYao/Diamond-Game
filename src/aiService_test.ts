@@ -165,7 +165,7 @@ describe("aiService", function() {
     expect(angular.equals(move[2].set.value, {rowS: 9, colS: 14, rowE: 7, colE: 16, playerNo: 3})).toBe(true);
   });
 
-  /* Testing for 3 steps is too slow to pass the unit test */
+  /* Testing for 3 steps is too slow to pass the unit test  */
 /*
   it("R finds a winning move that will lead to winning in 3 steps", function() {
     var move = aiService.createComputerMove(
