@@ -68,12 +68,8 @@ var game;
             return;
         }
         try {
-<<<<<<< HEAD
             var delta = { rowS: row, colS: col, rowE: 0, colE: 0, playerNo: state.delta.playerNo };
             var move = gameLogic.createMove(state.board, turnIndex, delta);
-=======
-            var move = gameLogic.createMove(state.board, row, col, lastUpdateUI.turnIndexAfterMove);
->>>>>>> yoav-zibin/gh-pages
             canMakeMove = false; // to prevent making another move
             gameService.makeMove(move);
         }
@@ -103,7 +99,7 @@ var game;
     }
     game.shouldSlowlyAppear = shouldSlowlyAppear;
 })(game || (game = {}));
-angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
+angular.module('myApp', ['ngTouch', 'ui.bootstrap'])
     .run(['initGameServices', function (initGameServices) {
         $rootScope['game'] = game;
         translate.setLanguage('en', {

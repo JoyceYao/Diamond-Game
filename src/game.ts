@@ -73,13 +73,8 @@ module game {
       return;
     }
     try {
-<<<<<<< HEAD
       var delta: BoardDelta = {rowS:row, colS:col, rowE:0, colE:0, playerNo:state.delta.playerNo}
       var move = gameLogic.createMove(state.board, turnIndex, delta);
-=======
-      let move = gameLogic.createMove(
-          state.board, row, col, lastUpdateUI.turnIndexAfterMove);
->>>>>>> yoav-zibin/gh-pages
       canMakeMove = false; // to prevent making another move
       gameService.makeMove(move);
     } catch (e) {
@@ -108,12 +103,7 @@ module game {
   }
 }
 
-<<<<<<< HEAD
-
 angular.module('myApp', ['ngTouch', 'ui.bootstrap'])
-=======
-angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
->>>>>>> yoav-zibin/gh-pages
   .run(['initGameServices', function (initGameServices: any) {
   $rootScope['game'] = game;
   translate.setLanguage('en',  {
