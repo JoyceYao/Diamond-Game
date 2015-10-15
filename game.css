@@ -33,3 +33,54 @@
 td {
   padding:0 5px 0 5px;
 }
+
+#gameArea {
+  background-image: url('./imgs/Diamond_Game.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 90% 98%;
+}
+
+.rows {
+  position:absolute;
+  width:100%; height:6%;
+}
+
+.cols {
+  position:absolute;
+  width:6%; height:100%;
+}
+
+#rows0 { top:0%; }
+#rows1 { top:7.8%; }
+#rows2 { top:15.6%; }
+#rows3 { top:23.4%; }
+#rows4 { top:31.2%; }
+#rows5 { top:39%; }
+#rows6 { top:46.8%; }
+#rows7 { top:54.6%; }
+#rows8 { top:62.4%; }
+#rows9 { top:70.2%; }
+#rows10 { top:78%; }
+#rows11 { top:85.8%; }
+#rows12 { top:93.6%; }
+
+#cols0 { left:4%; }
+#cols1 { left:8.79%; }
+#cols2 { left:13.58%; }
+#cols3 { left:18.37%; }
+#cols4 { left:23.16%; }
+#cols5 { left:27.95%; }
+#cols6 { left:32.74%; }
+#cols7 { left:37.53%; }
+#cols8 { left:42.32%; }
+#cols9 { left:47.11%; }
+#cols10 { left:51.9%; }
+#cols11 { left:56.69%; }
+#cols12 { left:61.48%; }
+#cols13 { left:66.27%; }
+#cols14 { left:71.06%; }
+#cols15 { left:75.85%; }
+#cols16 { left:80.64%; }
+#cols17 { left:85.43%; }
+#cols18 { left:90.22%; }

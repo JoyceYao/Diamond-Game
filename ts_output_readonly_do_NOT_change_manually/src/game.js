@@ -3,8 +3,8 @@ var game;
     var animationEnded = false;
     var canMakeMove = false;
     var isComputerTurn = false;
+    var lastUpdateUI = null;
     var state = null;
-    var turnIndex = null;
     game.isHelpModalShown = false;
     function init() {
         console.log("Translation of 'RULES_OF_TICTACTOE' is " + translate('RULES_OF_TICTACTOE'));
@@ -31,19 +31,17 @@ var game;
         });
     }
     function sendComputerMove() {
-        gameService.makeMove(aiService.createComputerMove(state.board, turnIndex, 
-        // at most 1 second for the AI to choose a move (but might be much quicker)
-        { millisecondsLimit: 1000 }));
+        gameService.makeMove(aiService.findComputerMove(lastUpdateUI));
     }
     function updateUI(params) {
         animationEnded = false;
+        lastUpdateUI = params;
         state = params.stateAfterMove;
         if (!state.board) {
             state.board = gameLogic.getInitialBoard(state.delta.playerNo);
         }
         canMakeMove = params.turnIndexAfterMove >= 0 &&
             params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
-        turnIndex = params.turnIndexAfterMove;
         // Is it the computer's turn?
         isComputerTurn = canMakeMove &&
             params.playersInfo[params.yourPlayerIndex].playerId === '';
@@ -70,8 +68,12 @@ var game;
             return;
         }
         try {
+<<<<<<< HEAD
             var delta = { rowS: row, colS: col, rowE: 0, colE: 0, playerNo: state.delta.playerNo };
             var move = gameLogic.createMove(state.board, turnIndex, delta);
+=======
+            var move = gameLogic.createMove(state.board, row, col, lastUpdateUI.turnIndexAfterMove);
+>>>>>>> yoav-zibin/gh-pages
             canMakeMove = false; // to prevent making another move
             gameService.makeMove(move);
         }
@@ -101,7 +103,7 @@ var game;
     }
     game.shouldSlowlyAppear = shouldSlowlyAppear;
 })(game || (game = {}));
-angular.module('myApp', ['ngTouch', 'ui.bootstrap'])
+angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
     .run(['initGameServices', function (initGameServices) {
         $rootScope['game'] = game;
         translate.setLanguage('en', {

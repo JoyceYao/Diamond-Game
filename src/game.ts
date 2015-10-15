@@ -1,10 +1,10 @@
 module game {
-  var animationEnded = false;
-  var canMakeMove = false;
-  var isComputerTurn = false;
-  var state: IState = null;
-  var turnIndex: number = null;
-  export var isHelpModalShown: boolean = false;
+  let animationEnded = false;
+  let canMakeMove = false;
+  let isComputerTurn = false;
+  let lastUpdateUI: IUpdateUI = null;
+  let state: IState = null;
+  export let isHelpModalShown: boolean = false;
 
   export function init() {
     console.log("Translation of 'RULES_OF_TICTACTOE' is " + translate('RULES_OF_TICTACTOE'));
@@ -33,21 +33,18 @@ module game {
   }
 
   function sendComputerMove() {
-    gameService.makeMove(
-        aiService.createComputerMove(state.board, turnIndex,
-          // at most 1 second for the AI to choose a move (but might be much quicker)
-          {millisecondsLimit: 1000}));
+    gameService.makeMove(aiService.findComputerMove(lastUpdateUI));
   }
 
   function updateUI(params: IUpdateUI): void {
     animationEnded = false;
+    lastUpdateUI = params;
     state = params.stateAfterMove;
     if (!state.board) {
       state.board = gameLogic.getInitialBoard(state.delta.playerNo);
     }
     canMakeMove = params.turnIndexAfterMove >= 0 && // game is ongoing
       params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
-    turnIndex = params.turnIndexAfterMove;
 
     // Is it the computer's turn?
     isComputerTurn = canMakeMove &&
@@ -76,8 +73,13 @@ module game {
       return;
     }
     try {
+<<<<<<< HEAD
       var delta: BoardDelta = {rowS:row, colS:col, rowE:0, colE:0, playerNo:state.delta.playerNo}
       var move = gameLogic.createMove(state.board, turnIndex, delta);
+=======
+      let move = gameLogic.createMove(
+          state.board, row, col, lastUpdateUI.turnIndexAfterMove);
+>>>>>>> yoav-zibin/gh-pages
       canMakeMove = false; // to prevent making another move
       gameService.makeMove(move);
     } catch (e) {
@@ -87,7 +89,7 @@ module game {
   }
 
   export function shouldShowImage(row: number, col: number): boolean {
-    var cell = state.board[row][col];
+    let cell = state.board[row][col];
     return cell !== "";
   }
 
@@ -106,8 +108,12 @@ module game {
   }
 }
 
+<<<<<<< HEAD
 
 angular.module('myApp', ['ngTouch', 'ui.bootstrap'])
+=======
+angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
+>>>>>>> yoav-zibin/gh-pages
   .run(['initGameServices', function (initGameServices: any) {
   $rootScope['game'] = game;
   translate.setLanguage('en',  {

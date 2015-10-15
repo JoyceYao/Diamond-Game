@@ -319,7 +319,7 @@ describe("In Diamond Game", function() {
   });
 
   it("null move is illegal", function() {
-    expectIllegalMove(0, {}, null);
+    expectIllegalMove(0, <IState>{}, null);
   });
 
   it("move without initialized board is illegal", function() {
@@ -327,11 +327,11 @@ describe("In Diamond Game", function() {
   });
 
   it("move without board is illegal", function() {
-    expectIllegalMove(0, {}, [{setTurn: {turnIndex : 1}}]);
+    expectIllegalMove(0, <IState>{}, [{setTurn: {turnIndex : 1}}]);
   });
 
   it("move without delta is illegal", function() {
-    expectIllegalMove(0, {}, [{setTurn: {turnIndex : 1}},
+    expectIllegalMove(0, <IState>{}, [{setTurn: {turnIndex : 1}},
       {set: {key: 'board', value:
         [['#', '#', '#', '#', '#', '#', '#', '#', '#', 'R', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
          ['#', '#', '#', '#', '#', '#', '#', '#', 'R', '', 'R', '#', '#', '#', '#', '#', '#', '#', '#'],
@@ -572,5 +572,4 @@ describe("In Diamond Game", function() {
         {set: {key: 'delta', value:{ rowS: 10, colS: 9, rowE: 8, colE: 11, playerNo: 2 }}}]];
     expect(angular.equals(possibleMoves, expectedMove)).toBe(true);
   });
-
 });
