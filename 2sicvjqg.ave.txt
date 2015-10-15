@@ -1,0 +1,49 @@
+Merge remote-tracking branch 'yoav-zibin/gh-pages' into gh-pages
+
+Conflicts:
+	index.html
+	karma.conf.js
+	simpleTest.html
+	src/aiService.ts
+	src/aiService_test.ts
+	src/game.ts
+	src/gameLogic.ts
+	src/gameLogic_test.ts
+	ts_output_readonly_do_NOT_change_manually/src/aiService.js
+	ts_output_readonly_do_NOT_change_manually/src/aiService_test.js
+	ts_output_readonly_do_NOT_change_manually/src/game.js
+	ts_output_readonly_do_NOT_change_manually/src/gameLogic.js
+	ts_output_readonly_do_NOT_change_manually/src/gameLogic_test.js
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch gh-pages
+# Your branch is up-to-date with 'origin/gh-pages'.
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	modified:   Gruntfile.js
+#	modified:   dist/everything.js
+#	modified:   dist/everything.min.js
+#	modified:   dist/everything.min.js.map
+#	new file:   example_state.html
+#	modified:   game.appcache
+#	modified:   game.css
+#	new file:   imgs/Diamond_Game.svg
+#	renamed:    game.html -> index.html
+#	renamed:    game.min.html -> index.min.html
+#	modified:   package.json
+#	modified:   simpleTest.html
+#	modified:   src/end_to_end_tests.ts
+#	modified:   src/game.ts
+#	modified:   src/gameLogic_test.ts
+#	modified:   ts_output_readonly_do_NOT_change_manually/src/end_to_end_tests.js
+#	modified:   ts_output_readonly_do_NOT_change_manually/src/game.js
+#
