@@ -10,23 +10,19 @@ var game;
     var possibleMoves = [];
     var playerNo = 0;
     function init() {
-        console.log("init");
         console.log("Translation of 'RULES_OF_DIAMOND_GAME' is " + translate('RULES_OF_DIAMOND_GAME'));
         resizeGameAreaService.setWidthToHeight(1);
-        console.log("init[1]");
         gameService.setGame({
             minNumberOfPlayers: 2,
             maxNumberOfPlayers: 3,
             isMoveOk: gameLogic.isMoveOk,
             updateUI: updateUI
         });
-        console.log("init[2]");
         // See http://www.sitepoint.com/css3-animation-javascript-event-handlers/
         document.addEventListener("animationend", animationEndedCallback, false); // standard
         document.addEventListener("webkitAnimationEnd", animationEndedCallback, false); // WebKit
         document.addEventListener("oanimationend", animationEndedCallback, false); // Opera
         gameLogic.initialPLayersMap();
-        console.log("init[3]");
     }
     game.init = init;
     function animationEndedCallback() {
@@ -42,32 +38,20 @@ var game;
         gameService.makeMove(aiService.findComputerMove(lastUpdateUI));
     }
     function updateUI(params) {
-        console.log("updateUI[1]");
         animationEnded = false;
         lastUpdateUI = params;
-        //console.log("updateUI[1-1] params=", JSON.stringify(params));
-        //state = params.stateAfterMove;
-        //console.log("updateUI[1-2] state=", JSON.stringify(state));
+        console.log("updateUI[1-1] params=", JSON.stringify(params));
         playerNo = params.playersInfo.length;
-        //console.log("updateUI[1-3] playerNo=", playerNo);
-        //if (Object.getOwnPropertyNames(params.stateAfterMove).length === 0) {
-        //    params.stateBeforeMove = {board: gameLogic.getInitialBoard(playerNo), delta: undefined}
-        //    params.stateAfterMove = {board: gameLogic.getInitialBoard(playerNo), delta: undefined}
-        //    console.log("updateUI[2] state=", JSON.stringify(params.stateAfterMove));
-        //}
         state = params.stateAfterMove;
         if (!state.board) {
             state.board = gameLogic.getInitialBoard(playerNo);
         }
-        //console.log("updateUI[1-5] state.board=", JSON.stringify(state.board));
-        //console.log("updateUI[1-6] state.board[0]=", JSON.stringify(state.board[0]));
+        rotateGameBoard(params);
         canMakeMove = params.turnIndexAfterMove >= 0 &&
             params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
-        //console.log("updateUI[3]");
         // Is it the computer's turn?
         isComputerTurn = canMakeMove &&
             params.playersInfo[params.yourPlayerIndex].playerId === '';
-        //console.log("updateUI[4]");
         if (isComputerTurn) {
             // To make sure the player won't click something and send a move instead of the computer sending a move.
             canMakeMove = false;
@@ -83,7 +67,7 @@ var game;
         }
     }
     function cellClicked(row, col) {
-        log.info(["Clicked on cell:", row, col]);
+        //log.info(["Clicked on cell:", row, col]);
         if (window.location.search === '?throwException') {
             throw new Error("Throwing the error because URL has '?throwException'");
         }
@@ -91,39 +75,44 @@ var game;
             return;
         }
         var myPlayerId = lastUpdateUI.turnIndexAfterMove;
-        var delta = { rowS: row, colS: col, rowE: 0, colE: 0, playerNo: playerNo };
+        var delta = { rowS: row, colS: col, rowE: row, colE: col, playerNo: playerNo };
         try {
             // select phase:
             //   if the player does not click on their own pieces
             //   or the piece has no valid move, then return
-            console.log("cellClicked[1-1]", selectedPosition);
+            //console.log("cellClicked[1-1]", selectedPosition);
             if (selectedPosition == null) {
-                console.log("cellClicked[1-3] isSelectable", isSelectable(row, col, myPlayerId, delta));
+                //console.log("cellClicked[1-3] isSelectable", isSelectable(row, col, myPlayerId, delta));
                 if (isSelectable(row, col, myPlayerId, delta)) {
                     selectedPosition = { row: row, col: col };
                 }
             }
             else {
                 // put phase:
-                //   check if the put position is a valid move
+                // if this position is the same with last position,
+                // then put the piece back
+                if (selectedPosition.row === row && selectedPosition.col === col) {
+                    selectedPosition = null;
+                    return;
+                }
                 var thisDelta = { rowS: selectedPosition.row, colS: selectedPosition.col, rowE: row, colE: col, playerNo: playerNo };
-                console.log("cellClicked[2-1]", JSON.stringify(state.board));
                 var move = gameLogic.createMove(state.board, myPlayerId, thisDelta);
-                canMakeMove = false; // to prevent making another move
-                console.log("cellClicked[2]", JSON.stringify(move));
-                gameService.makeMove(move);
-                console.log("cellClicked[3]");
-                selectedPosition = null;
+                //console.log("cellClicked[2-41] move", JSON.stringify(move));
+                //console.log("cellClicked[2-2] possibleMoves", JSON.stringify(possibleMoves));
+                if (isContain(possibleMoves, move)) {
+                    canMakeMove = false; // to prevent making another move
+                    gameService.makeMove(move);
+                    selectedPosition = null;
+                }
             }
         }
         catch (e) {
-            log.info(["Cell is already full in position:", row, col]);
+            log.info(["Not a valid move"]);
             return;
         }
     }
     game.cellClicked = cellClicked;
     function shouldShowImage(row, col) {
-        //log.info("shouldShowImage:", row, col);
         var cell = state.board[row][col];
         return cell !== "";
     }
@@ -147,18 +136,16 @@ var game;
     }
     game.shouldSlowlyAppear = shouldSlowlyAppear;
     function getBoardRow() {
-        //log.info("getBoardRow");
         return new Array(13);
     }
     game.getBoardRow = getBoardRow;
     function getBoardCol() {
-        //log.info("getBoardCol");
         return new Array(19);
     }
     game.getBoardCol = getBoardCol;
     function isSelectable(row, col, playerId, delta) {
-        console.log("isSelectable[0]", state.board[row][col]);
-        console.log("isSelectable[1]", gameLogic.getPlayerColorById(playerId));
+        //console.log("isSelectable[0]", state.board[row][col]);
+        //console.log("isSelectable[1]", gameLogic.getPlayerColorById(playerId));
         if (state.board[row][col] !== gameLogic.getPlayerColorById(playerId)) {
             return false;
         }
@@ -167,6 +154,32 @@ var game;
             return false;
         }
         return true;
+    }
+    function isContain(array, target) {
+        for (var i = 0; i < array.length; i++) {
+            if (angular.equals(array[i], target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    function rotateGameBoard(params) {
+        if (params.playMode == "single-player") {
+            return;
+        }
+        var gameBoard = document.getElementById("gameArea");
+        var thisPlayerColor = gameLogic.getPlayerColorById(params.turnIndexAfterMove);
+        switch (thisPlayerColor) {
+            case "R":
+                gameBoard.className = "rotationR";
+                break;
+            case "G":
+                gameBoard.className = "rotationG";
+                break;
+            case "Y":
+                gameBoard.className = "rotationY";
+                break;
+        }
     }
 })(game || (game = {}));
 angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
