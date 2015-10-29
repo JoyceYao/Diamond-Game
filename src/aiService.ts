@@ -3,6 +3,16 @@ module aiService {
     board: Board;
     deltaList: BoardDelta[];
   }
+  var defaultSearchStep = 2;
+
+  /** Returns the move that the computer player should do for the given updateUI. */
+  export function findComputerMove(updateUI: IUpdateUI): IMove {
+    return createComputerMove(
+      updateUI.stateAfterMove.board,
+      defaultSearchStep,
+      updateUI.numberOfPlayers,
+      updateUI.turnIndexAfterMove);
+    }
 
   /**
    * Returns the move that the computer player should do for the given board.

@@ -1,5 +1,11 @@
 var aiService;
 (function (aiService) {
+    var defaultSearchStep = 2;
+    /** Returns the move that the computer player should do for the given updateUI. */
+    function findComputerMove(updateUI) {
+        return createComputerMove(updateUI.stateAfterMove.board, defaultSearchStep, updateUI.numberOfPlayers, updateUI.turnIndexAfterMove);
+    }
+    aiService.findComputerMove = findComputerMove;
     /**
      * Returns the move that the computer player should do for the given board.
      * alphaBetaLimits is an object that sets a limit on the alpha-beta search,
