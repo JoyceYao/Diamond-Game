@@ -64,18 +64,24 @@ module game {
     isComputerTurn = canMakeMove &&
         params.playersInfo[params.yourPlayerIndex].playerId === '';
 
+    console.log("updateUI[3] isComputerTurn=", isComputerTurn);
+
     if (isComputerTurn) {
       // To make sure the player won't click something and send a move instead of the computer sending a move.
       canMakeMove = false;
       // We calculate the AI move only after the animation finishes,
       // because if we call aiService now
       // then the animation will be paused until the javascript finishes.
-      if (!state.delta) {
+      console.log("updateUI[3-1] state.delta=", state.delta);
+
+      //if (!state.delta) {
         // This is the first move in the match, so
         // there is not going to be an animation, so
         // call sendComputerMove() now (can happen in ?onlyAIs mode)
+        console.log("updateUI[4]");
         sendComputerMove();
-      }
+        console.log("updateUI[5]");
+      //}
     }
   }
 

@@ -3,7 +3,7 @@ module aiService {
     board: Board;
     deltaList: BoardDelta[];
   }
-  var defaultSearchStep = 2;
+  var defaultSearchStep = 1;
 
   /** Returns the move that the computer player should do for the given updateUI. */
   export function findComputerMove(updateUI: IUpdateUI): IMove {
@@ -27,10 +27,12 @@ module aiService {
     // 0) endMatch or setTurn
     // 1) {set: {key: 'board', value: ...}}
     // 2) {set: {key: 'delta', value: ...}}]
+    console.log("createComputerMove [0] ");
     return getBestMove(board, steps, playerNo, playerIndex);
   }
 
   function getBestMove(board: Board, steps: number, playerNo: number, playerIndex: number) : IMove {
+    console.log("getBestMove [0] ");
     gameLogic.initialPLayersMap();
     // The distance that reduced, the larger the better
     var maxDist = 0;
@@ -56,6 +58,7 @@ module aiService {
       }
     }
     var myMove = gameLogic.createMove(board, playerIndex, bestDelta);
+    console.log("getBestMove [1] ");
     return myMove;
   }
 

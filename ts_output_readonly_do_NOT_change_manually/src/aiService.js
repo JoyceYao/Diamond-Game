@@ -1,6 +1,6 @@
 var aiService;
 (function (aiService) {
-    var defaultSearchStep = 2;
+    var defaultSearchStep = 1;
     /** Returns the move that the computer player should do for the given updateUI. */
     function findComputerMove(updateUI) {
         return createComputerMove(updateUI.stateAfterMove.board, defaultSearchStep, updateUI.numberOfPlayers, updateUI.turnIndexAfterMove);
@@ -18,10 +18,12 @@ var aiService;
         // 0) endMatch or setTurn
         // 1) {set: {key: 'board', value: ...}}
         // 2) {set: {key: 'delta', value: ...}}]
+        console.log("createComputerMove [0] ");
         return getBestMove(board, steps, playerNo, playerIndex);
     }
     aiService.createComputerMove = createComputerMove;
     function getBestMove(board, steps, playerNo, playerIndex) {
+        console.log("getBestMove [0] ");
         gameLogic.initialPLayersMap();
         // The distance that reduced, the larger the better
         var maxDist = 0;
@@ -46,6 +48,7 @@ var aiService;
             }
         }
         var myMove = gameLogic.createMove(board, playerIndex, bestDelta);
+        console.log("getBestMove [1] ");
         return myMove;
     }
     /* return the final board state and movement history by N steps */
