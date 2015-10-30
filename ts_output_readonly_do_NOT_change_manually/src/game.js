@@ -195,20 +195,30 @@ var game;
                 break;
         }
     }
-    /*
-      function changePieceColor(row: number, col: number, playerId: number, startMove: boolean){
-        var playerPiece = document.getElementById("piece" + gameLogic.getPlayerColorById + "_" + row + "_" + col);
-        var replacedPiece = document.getElementById("pieceN_" + row + "_" + col);
-    
-        console.log();
-        if (startMove){
-          playerPiece.style.display = "none";
-          replacedPiece.style.display = "block";
-        } else {
-          playerPiece.style.display = "block";
-          replacedPiece.style.display = "none";
+    // make not in used columns smaller
+    function getColWidth(row, col) {
+        if ((row + col) % 2 === 0) {
+            return '8%';
         }
-      }*/
+        else {
+            return '0%';
+        }
+    }
+    function getLeftOffset(col) {
+        return (col * 4.59 + 5.5) + "%";
+    }
+    function getColStyle(row, col) {
+        //var width: string = getColWidth(row, col);;
+        console.log("getColStyle!!");
+        return {
+            "position": 'absolute',
+            "top": 0,
+            "left": getLeftOffset(col),
+            "width": getColWidth(row, col),
+            "height": '100%'
+        };
+    }
+    game.getColStyle = getColStyle;
     function isSelected(row, col) {
         if (!selectedPosition) {
             return false;

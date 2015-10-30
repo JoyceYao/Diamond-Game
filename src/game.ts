@@ -219,20 +219,30 @@ module game {
     }
   }
 
-/*
-  function changePieceColor(row: number, col: number, playerId: number, startMove: boolean){
-    var playerPiece = document.getElementById("piece" + gameLogic.getPlayerColorById + "_" + row + "_" + col);
-    var replacedPiece = document.getElementById("pieceN_" + row + "_" + col);
-
-    console.log();
-    if (startMove){
-      playerPiece.style.display = "none";
-      replacedPiece.style.display = "block";
+  // make not in used columns smaller
+  function getColWidth(row: number, col: number): string {
+    if ((row+col)%2 === 0) {
+      return '8%';
     } else {
-      playerPiece.style.display = "block";
-      replacedPiece.style.display = "none";
+      return '0%';
     }
-  }*/
+  }
+
+  function getLeftOffset(col: number): string {
+    return (col * 4.59 + 5.5) + "%";
+  }
+
+  export function getColStyle(row: number, col: number) {
+    //var width: string = getColWidth(row, col);;
+    console.log("getColStyle!!");
+    return {
+      "position":'absolute',
+      "top":0,
+      "left": getLeftOffset(col),
+      "width": getColWidth(row, col),
+      "height":'100%'
+    }
+  }
 
   export function isSelected(row: number, col: number): boolean {
     if (!selectedPosition){ return false; }
