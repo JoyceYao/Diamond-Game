@@ -104,7 +104,7 @@ var aiService;
     }
     /* calculate the row diff in this move */
     function getRowDiff(rowS, colS, rowE, colE, playerIndex) {
-        console.log("getRowDiff [1] rowS=" + rowS + " colS=" + colS + " rowE=" + rowE + " colE=" + colE);
+        //console.log("getRowDiff [1] rowS=" + rowS + " colS=" + colS + " rowE=" + rowE + " colE=" + colE );
         var startRow = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
         var endRow = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
         return startRow - endRow;

@@ -119,7 +119,7 @@ module aiService {
 
   /* calculate the row diff in this move */
   function getRowDiff(rowS: number, colS: number, rowE: number, colE: number, playerIndex: number): number {
-    console.log("getRowDiff [1] rowS=" + rowS + " colS=" + colS + " rowE=" + rowE + " colE=" + colE );
+    //console.log("getRowDiff [1] rowS=" + rowS + " colS=" + colS + " rowE=" + rowE + " colE=" + colE );
 
     var startRow : number = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
     var endRow : number = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);

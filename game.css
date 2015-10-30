@@ -39,6 +39,7 @@ td {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: contain;
+  top: 1%
 }
 
 .left-slide-column {
@@ -69,16 +70,16 @@ td {
 	transform: rotate(240deg);
 }
 
-
+/*
 .rows {
   position:absolute;
-  width:100%; height:6%;
+  width:100%; height:8%;
   margin: 0 auto;
 }
 
 .cols {
   position:absolute;
-  width:6%; height:100%;
+  width:8%; height:100%;
   margin: 0 auto;
 }
 
@@ -115,3 +116,4 @@ td {
 #cols16 { left:78.94%; }
 #cols17 { left:83.53%; }
 #cols18 { left:88.12%; }
+*/
