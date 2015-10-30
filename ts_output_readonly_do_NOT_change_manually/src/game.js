@@ -158,8 +158,6 @@ var game;
     }
     game.getBoardCol = getBoardCol;
     function isSelectable(row, col, playerId, delta) {
-        //console.log("isSelectable[0]", state.board[row][col]);
-        //console.log("isSelectable[1]", gameLogic.getPlayerColorById(playerId));
         if (state.board[row][col] !== gameLogic.getPlayerColorById(playerId)) {
             return false;
         }
@@ -195,30 +193,6 @@ var game;
                 break;
         }
     }
-    // make not in used columns smaller
-    function getColWidth(row, col) {
-        if ((row + col) % 2 === 0) {
-            return '8%';
-        }
-        else {
-            return '0%';
-        }
-    }
-    function getLeftOffset(col) {
-        return (col * 4.59 + 5.5) + "%";
-    }
-    function getColStyle(row, col) {
-        //var width: string = getColWidth(row, col);;
-        console.log("getColStyle!!");
-        return {
-            "position": 'absolute',
-            "top": 0,
-            "left": getLeftOffset(col),
-            "width": getColWidth(row, col),
-            "height": '100%'
-        };
-    }
-    game.getColStyle = getColStyle;
     function isSelected(row, col) {
         if (!selectedPosition) {
             return false;

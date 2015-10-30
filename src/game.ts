@@ -183,8 +183,6 @@ module game {
   }
 
   function isSelectable(row:number, col:number, playerId: number, delta: BoardDelta): boolean {
-    //console.log("isSelectable[0]", state.board[row][col]);
-    //console.log("isSelectable[1]", gameLogic.getPlayerColorById(playerId));
     if (state.board[row][col] !== gameLogic.getPlayerColorById(playerId)){
       return false;
     }
@@ -216,31 +214,6 @@ module game {
       case "R" : gameBoard.className = "rotationR"; break;
       case "G" : gameBoard.className = "rotationG"; break;
       case "Y" : gameBoard.className = "rotationY"; break;
-    }
-  }
-
-  // make not in used columns smaller
-  function getColWidth(row: number, col: number): string {
-    if ((row+col)%2 === 0) {
-      return '8%';
-    } else {
-      return '0%';
-    }
-  }
-
-  function getLeftOffset(col: number): string {
-    return (col * 4.59 + 5.5) + "%";
-  }
-
-  export function getColStyle(row: number, col: number) {
-    //var width: string = getColWidth(row, col);;
-    console.log("getColStyle!!");
-    return {
-      "position":'absolute',
-      "top":0,
-      "left": getLeftOffset(col),
-      "width": getColWidth(row, col),
-      "height":'100%'
     }
   }
 
