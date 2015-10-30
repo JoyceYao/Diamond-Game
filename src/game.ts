@@ -101,7 +101,7 @@ module game {
         if (isSelectable(row, col, myPlayerId, delta)) {
           selectedPosition = {row:row, col:col};
           // do something to show the selected piecs
-
+          changePieceColor(row, col, myPlayerId, true);
         }
       } else {
         // put phase:
@@ -109,6 +109,7 @@ module game {
         // then put the piece back
         if (selectedPosition.row === row && selectedPosition.col === col){
           selectedPosition = null;
+          //changePieceColor(row, col, myPlayerId, false);
           return;
         }
 
@@ -122,6 +123,7 @@ module game {
           canMakeMove = false; // to prevent making another move
           gameService.makeMove(move);
           selectedPosition = null;
+          //changePieceColor(row, col, myPlayerId, false);
         }
       }
 
@@ -137,15 +139,15 @@ module game {
   }
 
   export function isPieceRed(row: number, col: number): boolean {
-    return state.board[row][col] === 'R';
+    return state.board[row][col] === 'R' && !isSelected(row, col);
   }
 
   export function isPieceGreen(row: number, col: number): boolean {
-    return state.board[row][col] === 'G';
+    return state.board[row][col] === 'G' && !isSelected(row, col);
   }
 
   export function isPieceYellow(row: number, col: number): boolean {
-    return state.board[row][col] === 'Y';
+    return state.board[row][col] === 'Y' && !isSelected(row, col);
   }
 
   export function shouldSlowlyAppear(row: number, col: number): boolean {
@@ -197,6 +199,28 @@ module game {
       case "G" : gameBoard.className = "rotationG"; break;
       case "Y" : gameBoard.className = "rotationY"; break;
     }
+  }
+
+  function changePieceColor(row: number, col: number, playerId: number, startMove: boolean){
+    var playerPiece = document.getElementById("piece" + gameLogic.getPlayerColorById + "_" + row + "_" + col);
+    var replacedPiece = document.getElementById("pieceN_" + row + "_" + col);
+
+    console.log();
+    if (startMove){
+      playerPiece.style.display = "none";
+      replacedPiece.style.display = "block";
+    } else {
+      playerPiece.style.display = "block";
+      replacedPiece.style.display = "none";
+    }
+  }
+
+  export function isSelected(row: number, col: number): boolean {
+    if (!selectedPosition){ return false; }
+    if (selectedPosition.row === row && selectedPosition.col === col){
+      return true;
+    }
+    return false;
   }
 
 }

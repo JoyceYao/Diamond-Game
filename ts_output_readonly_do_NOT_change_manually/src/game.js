@@ -85,6 +85,8 @@ var game;
                 //console.log("cellClicked[1-3] isSelectable", isSelectable(row, col, myPlayerId, delta));
                 if (isSelectable(row, col, myPlayerId, delta)) {
                     selectedPosition = { row: row, col: col };
+                    // do something to show the selected piecs
+                    changePieceColor(row, col, myPlayerId, true);
                 }
             }
             else {
@@ -93,6 +95,7 @@ var game;
                 // then put the piece back
                 if (selectedPosition.row === row && selectedPosition.col === col) {
                     selectedPosition = null;
+                    //changePieceColor(row, col, myPlayerId, false);
                     return;
                 }
                 var thisDelta = { rowS: selectedPosition.row, colS: selectedPosition.col, rowE: row, colE: col, playerNo: playerNo };
@@ -118,15 +121,15 @@ var game;
     }
     game.shouldShowImage = shouldShowImage;
     function isPieceRed(row, col) {
-        return state.board[row][col] === 'R';
+        return state.board[row][col] === 'R' && !isSelected(row, col);
     }
     game.isPieceRed = isPieceRed;
     function isPieceGreen(row, col) {
-        return state.board[row][col] === 'G';
+        return state.board[row][col] === 'G' && !isSelected(row, col);
     }
     game.isPieceGreen = isPieceGreen;
     function isPieceYellow(row, col) {
-        return state.board[row][col] === 'Y';
+        return state.board[row][col] === 'Y' && !isSelected(row, col);
     }
     game.isPieceYellow = isPieceYellow;
     function shouldSlowlyAppear(row, col) {
@@ -181,6 +184,29 @@ var game;
                 break;
         }
     }
+    function changePieceColor(row, col, playerId, startMove) {
+        var playerPiece = document.getElementById("piece" + gameLogic.getPlayerColorById + "_" + row + "_" + col);
+        var replacedPiece = document.getElementById("pieceN_" + row + "_" + col);
+        console.log();
+        if (startMove) {
+            playerPiece.style.display = "none";
+            replacedPiece.style.display = "block";
+        }
+        else {
+            playerPiece.style.display = "block";
+            replacedPiece.style.display = "none";
+        }
+    }
+    function isSelected(row, col) {
+        if (!selectedPosition) {
+            return false;
+        }
+        if (selectedPosition.row === row && selectedPosition.col === col) {
+            return true;
+        }
+        return false;
+    }
+    game.isSelected = isSelected;
 })(game || (game = {}));
 angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
     .run(function () {

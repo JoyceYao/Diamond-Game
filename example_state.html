@@ -23,8 +23,8 @@
 <svg>
   <defs>
     <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-    <stop offset="0%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
-    <stop offset="100%" style="stop-color:rgb(150,0,0);stop-opacity:1" />
+    <stop offset="0%" style="stop-color:rgb(255,102,102);stop-opacity:1" /> <!--255 0 0 -->
+    <stop offset="100%" style="stop-color:rgb(155,0,0);stop-opacity:1" /> <!--150 0 0-->
     </radialGradient>
     <ellipse id="red-piece" cx="50%" cy="50%" rx="45%" ry="45%" fill="url(#grad1)" />
 
@@ -39,6 +39,13 @@
     <stop offset="100%" style="stop-color:rgb(255,185,15);stop-opacity:1" />
     </radialGradient>
     <ellipse id="yellow-piece" cx="50%" cy="50%" rx="45%" ry="45%" fill="url(#grad3)" />
+
+    <radialGradient id="grad4" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+    <stop offset="0%" style="stop-color:rgb(153,255,255);stop-opacity:1" />
+    <stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
+    </radialGradient>
+    <ellipse id="blue-piece" cx="50%" cy="50%" rx="45%" ry="45%" fill="url(#grad4)" />
+
   </defs>
 </svg>
 
@@ -64,12 +71,12 @@
   <div class="rows" id="rows3">
     <div class="cols" id="cols0">
       <svg class="piece" height="100%" width="100%">
-        <use xlink:href="#yellow-piece" />
+        <use xlink:href="#blue-piece" />
       </svg>
     </div>
     <div class="cols" id="cols2">
       <svg class="piece" height="100%" width="100%">
-        <use xlink:href="#yellow-piece" />
+        <use xlink:href="#blue-piece" />
       </svg>
     </div>
     <div class="cols" id="cols4">
