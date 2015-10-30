@@ -10,7 +10,7 @@ var game;
     var possibleMoves = [];
     var playerNo = 0;
     function init() {
-        console.log("Translation of 'RULES_OF_DIAMOND_GAME' is " + translate('RULES_OF_DIAMOND_GAME'));
+        //console.log("Translation of 'RULES_OF_DIAMOND_GAME' is " + translate('RULES_OF_DIAMOND_GAME'));
         resizeGameAreaService.setWidthToHeight(1);
         gameService.setGame({
             minNumberOfPlayers: 2,
@@ -40,33 +40,33 @@ var game;
     function updateUI(params) {
         animationEnded = false;
         lastUpdateUI = params;
-        console.log("updateUI[1-1] params=", JSON.stringify(params));
+        //console.log("updateUI[1-1] params=", JSON.stringify(params));
         playerNo = params.playersInfo.length;
         state = params.stateAfterMove;
         if (!state.board) {
             state.board = gameLogic.getInitialBoard(playerNo);
         }
-        rotateGameBoard(params);
+        //console.log("updateUI[2] isComputerTurn=", isComputerTurn);
         canMakeMove = params.turnIndexAfterMove >= 0 &&
             params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
         // Is it the computer's turn?
         isComputerTurn = canMakeMove &&
             params.playersInfo[params.yourPlayerIndex].playerId === '';
-        console.log("updateUI[3] isComputerTurn=", isComputerTurn);
+        rotateGameBoard(params);
+        //console.log("updateUI[3] isComputerTurn=", isComputerTurn);
         if (isComputerTurn) {
             // To make sure the player won't click something and send a move instead of the computer sending a move.
             canMakeMove = false;
             // We calculate the AI move only after the animation finishes,
             // because if we call aiService now
             // then the animation will be paused until the javascript finishes.
-            console.log("updateUI[3-1] state.delta=", state.delta);
+            //console.log("updateUI[3-1] state.delta=", state.delta);
             //if (!state.delta) {
             // This is the first move in the match, so
             // there is not going to be an animation, so
             // call sendComputerMove() now (can happen in ?onlyAIs mode)
-            console.log("updateUI[4]");
+            //console.log("updateUI[4]");
             sendComputerMove();
-            console.log("updateUI[5]");
         }
     }
     function cellClicked(row, col) {
@@ -79,6 +79,8 @@ var game;
         }
         var myPlayerId = lastUpdateUI.turnIndexAfterMove;
         var delta = { rowS: row, colS: col, rowE: row, colE: col, playerNo: playerNo };
+        //console.log("cellClicked[0] selectedPosition=", selectedPosition);
+        //console.log("cellClicked[1] row=" + row + " col=" + col);
         try {
             // select phase:
             //   if the player does not click on their own pieces
@@ -89,18 +91,23 @@ var game;
                 if (isSelectable(row, col, myPlayerId, delta)) {
                     selectedPosition = { row: row, col: col };
                     // do something to show the selected piecs
-                    changePieceColor(row, col, myPlayerId, true);
+                    //changePieceColor(row, col, myPlayerId, true);
+                    //console.log("cellClicked[2]")
+                    return;
                 }
             }
             else {
                 // put phase:
                 // if this position is the same with last position,
                 // then put the piece back
+                //console.log("cellClicked[3]")
                 if (selectedPosition.row === row && selectedPosition.col === col) {
+                    //console.log("cellClicked[4]")
                     selectedPosition = null;
                     //changePieceColor(row, col, myPlayerId, false);
                     return;
                 }
+                //console.log("cellClicked[5]")
                 var thisDelta = { rowS: selectedPosition.row, colS: selectedPosition.col, rowE: row, colE: col, playerNo: playerNo };
                 var move = gameLogic.createMove(state.board, myPlayerId, thisDelta);
                 //console.log("cellClicked[2-41] move", JSON.stringify(move));
@@ -124,6 +131,7 @@ var game;
     }
     game.shouldShowImage = shouldShowImage;
     function isPieceRed(row, col) {
+        //console.log("isPieceRed=" + row + " " + col);
         return state.board[row][col] === 'R' && !isSelected(row, col);
     }
     game.isPieceRed = isPieceRed;
@@ -170,7 +178,7 @@ var game;
         return false;
     }
     function rotateGameBoard(params) {
-        if (params.playMode == "single-player") {
+        if (params.playMode == "single-player" || isComputerTurn) {
             return;
         }
         var gameBoard = document.getElementById("gameArea");
@@ -187,19 +195,20 @@ var game;
                 break;
         }
     }
-    function changePieceColor(row, col, playerId, startMove) {
+    /*
+      function changePieceColor(row: number, col: number, playerId: number, startMove: boolean){
         var playerPiece = document.getElementById("piece" + gameLogic.getPlayerColorById + "_" + row + "_" + col);
         var replacedPiece = document.getElementById("pieceN_" + row + "_" + col);
+    
         console.log();
-        if (startMove) {
-            playerPiece.style.display = "none";
-            replacedPiece.style.display = "block";
+        if (startMove){
+          playerPiece.style.display = "none";
+          replacedPiece.style.display = "block";
+        } else {
+          playerPiece.style.display = "block";
+          replacedPiece.style.display = "none";
         }
-        else {
-            playerPiece.style.display = "block";
-            replacedPiece.style.display = "none";
-        }
-    }
+      }*/
     function isSelected(row, col) {
         if (!selectedPosition) {
             return false;

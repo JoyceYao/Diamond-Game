@@ -27,19 +27,21 @@ module aiService {
     // 0) endMatch or setTurn
     // 1) {set: {key: 'board', value: ...}}
     // 2) {set: {key: 'delta', value: ...}}]
-    console.log("createComputerMove [0] ");
+    //console.log("createComputerMove [0] ");
     return getBestMove(board, steps, playerNo, playerIndex);
   }
 
   function getBestMove(board: Board, steps: number, playerNo: number, playerIndex: number) : IMove {
-    console.log("getBestMove [0] ");
+    //console.log("getBestMove [0] ");
     gameLogic.initialPLayersMap();
     // The distance that reduced, the larger the better
     var maxDist = 0;
-    var bestDelta : BoardDelta;
+    var bestDelta : BoardDelta = null;
     var deltaList : BoardDelta[] = [];
     var myPieces = getMyPiecePosition(board, playerIndex);
     var stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
+
+    //console.log("getBestMove [1] stateList=", JSON.stringify(stateList));
 
     /* for each move result, calculate the distance reduced by the movement,
       choose the move that reduce the most distance */
@@ -52,17 +54,21 @@ module aiService {
         var dist = getRowDiff(thisDelta.rowS, thisDelta.colS, thisDelta.rowE, thisDelta.colE, playerIndex);
         thisDist += dist;
       }
-      if (thisDist > maxDist){
+      if (bestDelta === null || thisDist > maxDist){
         maxDist = thisDist;
         bestDelta = thisDeltaList[0];
+
+        //console.log("getBestMove [3] bestDelta=", JSON.stringify(bestDelta));
       }
     }
+    //console.log("getBestMove [4] board=", JSON.stringify(board));
+    //console.log("getBestMove [5] bestDelta=", JSON.stringify(bestDelta));
     var myMove = gameLogic.createMove(board, playerIndex, bestDelta);
-    console.log("getBestMove [1] ");
+    //console.log("getBestMove [6] ");
     return myMove;
   }
 
-  /* return the final board state and movement history by N steps */
+  /* return the final board state and movement history (delta list) by N steps */
   function getBoardListAfterNSteps(board: Board, deltaList: BoardDelta[], myPieces: number[][], steps: number, playerNo: number, playerIndex: number): IDeltaHistory[] {
     if (steps == 0){ return [{board: board, deltaList: angular.copy(deltaList)}]; }
     var result : IDeltaHistory[] = [];
@@ -78,6 +84,9 @@ module aiService {
         // if the move is going backward, don't consider next step
         if(getRowDiff(nextDelta.rowS, nextDelta.colS, nextDelta.rowE, nextDelta.colE, playerIndex) < 0){ continue; }
 
+        //console.log("getBoardListAfterNSteps[0] nextBoard=", nextBoard);
+        //console.log("getBoardListAfterNSteps[1] nextDelta=", nextDelta);
+
         var nextMyPieces = angular.copy(myPieces);
         nextMyPieces.splice(i, 1);
         nextMyPieces.push([nextDelta.rowE, nextDelta.colE]);
@@ -86,8 +95,11 @@ module aiService {
         if(thisResult){ result.push.apply(result, thisResult); }
         // remove last element for next recursion
         deltaList.splice(-1,1);
+
+        //console.log("getBoardListAfterNSteps[3] deltaList=", deltaList);
       }
     }
+    //console.log("getBoardListAfterNSteps[4] result=", result);
     return result;
   }
 
@@ -107,6 +119,8 @@ module aiService {
 
   /* calculate the row diff in this move */
   function getRowDiff(rowS: number, colS: number, rowE: number, colE: number, playerIndex: number): number {
+    console.log("getRowDiff [1] rowS=" + rowS + " colS=" + colS + " rowE=" + rowE + " colE=" + colE );
+
     var startRow : number = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
     var endRow : number = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
     return startRow-endRow;
@@ -117,10 +131,10 @@ module aiService {
    [[['#', '#', '#', '#', '#', '#', '#', '#', '#', '0', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
      ['#', '#', '#', '#', '#', '#', '#', '#', '1', '', '1', '#', '#', '#', '#', '#', '#', '#', '#'],
      ['#', '#', '#', '#', '#', '#', '#', '2', '', '2', '', '2', '#', '#', '#', '#', '#', '#', '#'],
-     ['6', '', '5', '', '4', '', '3', '', '3', '', '3', '', '3', '', '4', '', '5', '', '6'],
-     ['#', '6', '', '5', '', '4', '', '4', '', '4', '', '4', '', '4', '', '5', '', '6', '#'],
-     ['#', '#', '6', '', '5', '', '5', '', '5', '', '5', '', '5', '', '5', '', '6', '#', '#'],
-     ['#', '#', '#', '6', '', '6', '', '6', '', '6', '', '6', '', '6', '', '6', '#', '#', '#'],
+     ['9', '', '7', '', '5', '', '3', '', '3', '', '3', '', '3', '', '5', '', '7', '', '9'],
+     ['#', '8', '', '6', '', '5', '', '4', '', '4', '', '4', '', '5', '', '6', '', '8', '#'],
+     ['#', '#', '7', '', '6', '', '5', '', '5', '', '5', '', '5', '', '6', '', '7', '#', '#'],
+     ['#', '#', '#', '7', '', '6', '', '6', '', '6', '', '6', '', '6', '', '7', '#', '#', '#'],
      ['#', '#', '8', '', '7', '', '7', '', '7', '', '7', '', '7', '', '7', '', '8', '#', '#'],
      ['#', '10', '', '9', '', '8', '', '8', '', '8', '', '8', '', '8', '', '9', '', '10', '#'],
      ['12', '', '11', '', '10', '', '9', '', '9', '', '9', '', '9', '', '10', '', '11', '', '12'],
@@ -131,29 +145,29 @@ module aiService {
     [['#', '#', '#', '#', '#', '#', '#', '#', '#', '12', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
      ['#', '#', '#', '#', '#', '#', '#', '#', '10', '', '11', '#', '#', '#', '#', '#', '#', '#', '#'],
      ['#', '#', '#', '#', '#', '#', '#', '8', '', '9', '', '10', '#', '#', '#', '#', '#', '#', '#'],
-     ['6', '', '6', '', '6', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '', '12'],
-     ['#', '5', '', '5', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '#'],
-     ['#', '#', '4', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '#', '#'],
+     ['9', '', '8', '', '7', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '', '12'],
+     ['#', '7', '', '6', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '#'],
+     ['#', '#', '5', '', '5', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '#', '#'],
      ['#', '#', '#', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '#', '#', '#'],
      ['#', '#', '2', '', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '10', '#', '#'],
      ['#', '1', '', '2', '', '3', '', '4', '', '5', '', '6', '', '7', '', '9', '', '11', '#'],
-     ['0', '', '1', '', '2', '', '3', '', '4', '', '5', '', '6', '', '8', '', '10', '', '12'],
-     ['#', '#', '#', '#', '#', '#', '#', '4', '', '5', '', '6', '#', '#', '#', '#', '#', '#', '#'],
-     ['#', '#', '#', '#', '#', '#', '#', '#', '5', '', '6', '#', '#', '#', '#', '#', '#', '#', '#'],
-     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '6', '#', '#', '#', '#', '#', '#', '#', '#', '#']],
+     ['0', '', '1', '', '2', '', '3', '', '5', '', '6', '', '6', '', '8', '', '10', '', '12'],
+     ['#', '#', '#', '#', '#', '#', '#', '5', '', '6', '', '7', '#', '#', '#', '#', '#', '#', '#'],
+     ['#', '#', '#', '#', '#', '#', '#', '#', '7', '', '8', '#', '#', '#', '#', '#', '#', '#', '#'],
+     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '9', '#', '#', '#', '#', '#', '#', '#', '#', '#']],
 
     [['#', '#', '#', '#', '#', '#', '#', '#', '#', '12', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
      ['#', '#', '#', '#', '#', '#', '#', '#', '11', '', '10', '#', '#', '#', '#', '#', '#', '#', '#'],
      ['#', '#', '#', '#', '#', '#', '#', '10', '', '9', '', '8', '#', '#', '#', '#', '#', '#', '#'],
-     ['12', '', '11', '', '10', '', '9', '', '8', '', '7', '', '6', '', '6', '', '6', '', '6'],
-     ['#', '11', '', '10', '', '9', '', '8', '', '7', '', '6', '', '5', '', '5', '', '5', '#'],
-     ['#', '#', '10', '', '9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '4', '#', '#'],
+     ['12', '', '11', '', '10', '', '9', '', '8', '', '7', '', '6', '', '7', '', '8', '', '9'],
+     ['#', '11', '', '10', '', '9', '', '8', '', '7', '', '6', '', '6', '', '6', '', '7', '#'],
+     ['#', '#', '10', '', '9', '', '8', '', '7', '', '6', '', '5', '', '5', '', '5', '#', '#'],
      ['#', '#', '#', '9', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3', '#', '#', '#'],
      ['#', '#', '10', '', '8', '', '7', '', '6', '', '5', '', '4', '', '3', '', '2', '#', '#'],
      ['#', '11', '', '9', '', '7', '', '6', '', '5', '', '4', '', '3', '', '2', '', '1', '#'],
-     ['12', '', '10', '', '8', '', '6', '', '5', '', '4', '', '3', '', '2', '', '1', '', '0'],
-     ['#', '#', '#', '#', '#', '#', '#', '6', '', '5', '', '4', '#', '#', '#', '#', '#', '#', '#'],
-     ['#', '#', '#', '#', '#', '#', '#', '#', '6', '', '5', '#', '#', '#', '#', '#', '#', '#', '#'],
-     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '6', '#', '#', '#', '#', '#', '#', '#', '#', '#']]]
+     ['12', '', '10', '', '8', '', '6', '', '6', '', '5', '', '3', '', '2', '', '1', '', '0'],
+     ['#', '#', '#', '#', '#', '#', '#', '7', '', '6', '', '5', '#', '#', '#', '#', '#', '#', '#'],
+     ['#', '#', '#', '#', '#', '#', '#', '#', '8', '', '7', '#', '#', '#', '#', '#', '#', '#', '#'],
+     ['#', '#', '#', '#', '#', '#', '#', '#', '#', '9', '#', '#', '#', '#', '#', '#', '#', '#', '#']]]
 
 }
