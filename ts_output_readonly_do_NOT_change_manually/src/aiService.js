@@ -18,12 +18,10 @@ var aiService;
         // 0) endMatch or setTurn
         // 1) {set: {key: 'board', value: ...}}
         // 2) {set: {key: 'delta', value: ...}}]
-        //console.log("createComputerMove [0] ");
         return getBestMove(board, steps, playerNo, playerIndex);
     }
     aiService.createComputerMove = createComputerMove;
     function getBestMove(board, steps, playerNo, playerIndex) {
-        //console.log("getBestMove [0] ");
         gameLogic.initialPLayersMap();
         // The distance that reduced, the larger the better
         var maxDist = 0;
@@ -31,7 +29,6 @@ var aiService;
         var deltaList = [];
         var myPieces = getMyPiecePosition(board, playerIndex);
         var stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
-        //console.log("getBestMove [1] stateList=", JSON.stringify(stateList));
         /* for each move result, calculate the distance reduced by the movement,
           choose the move that reduce the most distance */
         for (var i = 0; i < stateList.length; i++) {
@@ -48,10 +45,9 @@ var aiService;
                 bestDelta = thisDeltaList[0];
             }
         }
-        //console.log("getBestMove [4] board=", JSON.stringify(board));
-        //console.log("getBestMove [5] bestDelta=", JSON.stringify(bestDelta));
+        // if don't find a good move within one steps (very close to target board)
+        // search for two steps ahead
         var myMove = gameLogic.createMove(board, playerIndex, bestDelta);
-        //console.log("getBestMove [6] ");
         return myMove;
     }
     /* return the final board state and movement history (delta list) by N steps */
@@ -68,12 +64,15 @@ var aiService;
                 var thisMove = allMoves[j];
                 var nextBoard = thisMove[1].set.value;
                 var nextDelta = thisMove[2].set.value;
+                // if find a winning step, use it and return
+                if (thisMove[0].endMatch != undefined) {
+                    deltaList.push(nextDelta);
+                    return [{ board: board, deltaList: angular.copy(deltaList) }];
+                }
                 // if the move is going backward, don't consider next step
                 if (getRowDiff(nextDelta.rowS, nextDelta.colS, nextDelta.rowE, nextDelta.colE, playerIndex) < 0) {
                     continue;
                 }
-                //console.log("getBoardListAfterNSteps[0] nextBoard=", nextBoard);
-                //console.log("getBoardListAfterNSteps[1] nextDelta=", nextDelta);
                 var nextMyPieces = angular.copy(myPieces);
                 nextMyPieces.splice(i, 1);
                 nextMyPieces.push([nextDelta.rowE, nextDelta.colE]);
@@ -86,7 +85,6 @@ var aiService;
                 deltaList.splice(-1, 1);
             }
         }
-        //console.log("getBoardListAfterNSteps[4] result=", result);
         return result;
     }
     /* return the location of all pieces of this player */
@@ -104,7 +102,6 @@ var aiService;
     }
     /* calculate the row diff in this move */
     function getRowDiff(rowS, colS, rowE, colE, playerIndex) {
-        //console.log("getRowDiff [1] rowS=" + rowS + " colS=" + colS + " rowE=" + rowE + " colE=" + colE );
         var startRow = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
         var endRow = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
         return startRow - endRow;

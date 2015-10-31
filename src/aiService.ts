@@ -27,12 +27,10 @@ module aiService {
     // 0) endMatch or setTurn
     // 1) {set: {key: 'board', value: ...}}
     // 2) {set: {key: 'delta', value: ...}}]
-    //console.log("createComputerMove [0] ");
     return getBestMove(board, steps, playerNo, playerIndex);
   }
 
   function getBestMove(board: Board, steps: number, playerNo: number, playerIndex: number) : IMove {
-    //console.log("getBestMove [0] ");
     gameLogic.initialPLayersMap();
     // The distance that reduced, the larger the better
     var maxDist = 0;
@@ -40,8 +38,6 @@ module aiService {
     var deltaList : BoardDelta[] = [];
     var myPieces = getMyPiecePosition(board, playerIndex);
     var stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
-
-    //console.log("getBestMove [1] stateList=", JSON.stringify(stateList));
 
     /* for each move result, calculate the distance reduced by the movement,
       choose the move that reduce the most distance */
@@ -57,14 +53,13 @@ module aiService {
       if (bestDelta === null || thisDist > maxDist){
         maxDist = thisDist;
         bestDelta = thisDeltaList[0];
-
-        //console.log("getBestMove [3] bestDelta=", JSON.stringify(bestDelta));
       }
     }
-    //console.log("getBestMove [4] board=", JSON.stringify(board));
-    //console.log("getBestMove [5] bestDelta=", JSON.stringify(bestDelta));
+
+    // if don't find a good move within one steps (very close to target board)
+    // search for two steps ahead
+
     var myMove = gameLogic.createMove(board, playerIndex, bestDelta);
-    //console.log("getBestMove [6] ");
     return myMove;
   }
 
@@ -81,11 +76,15 @@ module aiService {
         var thisMove = allMoves[j];
         var nextBoard = thisMove[1].set.value;
         var nextDelta = thisMove[2].set.value;
-        // if the move is going backward, don't consider next step
-        if(getRowDiff(nextDelta.rowS, nextDelta.colS, nextDelta.rowE, nextDelta.colE, playerIndex) < 0){ continue; }
 
-        //console.log("getBoardListAfterNSteps[0] nextBoard=", nextBoard);
-        //console.log("getBoardListAfterNSteps[1] nextDelta=", nextDelta);
+        // if find a winning step, use it and return
+        if (thisMove[0].endMatch != undefined) {
+          deltaList.push(nextDelta);
+          return [{board: board, deltaList: angular.copy(deltaList)}];
+        }
+
+        // if the move is going backward, don't consider next step
+        if (getRowDiff(nextDelta.rowS, nextDelta.colS, nextDelta.rowE, nextDelta.colE, playerIndex) < 0){ continue; }
 
         var nextMyPieces = angular.copy(myPieces);
         nextMyPieces.splice(i, 1);
@@ -95,11 +94,8 @@ module aiService {
         if(thisResult){ result.push.apply(result, thisResult); }
         // remove last element for next recursion
         deltaList.splice(-1,1);
-
-        //console.log("getBoardListAfterNSteps[3] deltaList=", deltaList);
       }
     }
-    //console.log("getBoardListAfterNSteps[4] result=", result);
     return result;
   }
 
@@ -119,8 +115,6 @@ module aiService {
 
   /* calculate the row diff in this move */
   function getRowDiff(rowS: number, colS: number, rowE: number, colE: number, playerIndex: number): number {
-    //console.log("getRowDiff [1] rowS=" + rowS + " colS=" + colS + " rowE=" + rowE + " colE=" + colE );
-
     var startRow : number = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
     var endRow : number = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
     return startRow-endRow;

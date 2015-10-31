@@ -48,15 +48,11 @@ module game {
   function updateUI(params: IUpdateUI): void {
     animationEnded = false;
     lastUpdateUI = params;
-    //console.log("updateUI[1-1] params=", JSON.stringify(params));
     playerNo = params.playersInfo.length;
     state = params.stateAfterMove;
     if (!state.board) {
       state.board = gameLogic.getInitialBoard(playerNo);
     }
-
-    //console.log("updateUI[2] isComputerTurn=", isComputerTurn);
-
 
     canMakeMove = params.turnIndexAfterMove >= 0 && // game is ongoing
       params.yourPlayerIndex === params.turnIndexAfterMove; // it's my turn
@@ -66,8 +62,6 @@ module game {
         params.playersInfo[params.yourPlayerIndex].playerId === '';
 
     rotateGameBoard(params);
-
-    //console.log("updateUI[3] isComputerTurn=", isComputerTurn);
 
     if (isComputerTurn) {
       // To make sure the player won't click something and send a move instead of the computer sending a move.
@@ -81,15 +75,12 @@ module game {
         // This is the first move in the match, so
         // there is not going to be an animation, so
         // call sendComputerMove() now (can happen in ?onlyAIs mode)
-        //console.log("updateUI[4]");
         sendComputerMove();
-        //console.log("updateUI[5]");
       //}
     }
   }
 
   export function cellClicked(row: number, col: number): void {
-    //log.info(["Clicked on cell:", row, col]);
     if (window.location.search === '?throwException') { // to test encoding a stack trace with sourcemap
       throw new Error("Throwing the error because URL has '?throwException'");
     }
@@ -100,47 +91,30 @@ module game {
     var myPlayerId: number = lastUpdateUI.turnIndexAfterMove;
     var delta: BoardDelta = {rowS:row, colS:col, rowE:row, colE:col, playerNo:playerNo};
 
-    //console.log("cellClicked[0] selectedPosition=", selectedPosition);
-    //console.log("cellClicked[1] row=" + row + " col=" + col);
-
     try {
       // select phase:
       //   if the player does not click on their own pieces
       //   or the piece has no valid move, then return
-      //console.log("cellClicked[1-1]", selectedPosition);
       if (selectedPosition == null){
-        //console.log("cellClicked[1-3] isSelectable", isSelectable(row, col, myPlayerId, delta));
         if (isSelectable(row, col, myPlayerId, delta)) {
           selectedPosition = {row:row, col:col};
-          // do something to show the selected piecs
-          //changePieceColor(row, col, myPlayerId, true);
-          //console.log("cellClicked[2]")
           return;
         }
       } else {
         // put phase:
         // if this position is the same with last position,
-        // then put the piece back
-        //console.log("cellClicked[3]")
+        // then put the piece back (cancel selection)
         if (selectedPosition.row === row && selectedPosition.col === col){
-          //console.log("cellClicked[4]")
           selectedPosition = null;
-          //changePieceColor(row, col, myPlayerId, false);
           return;
         }
 
-        //console.log("cellClicked[5]")
         var thisDelta: BoardDelta = {rowS: selectedPosition.row, colS: selectedPosition.col, rowE:row, colE:col, playerNo:playerNo};
         var move = gameLogic.createMove(state.board, myPlayerId, thisDelta);
-
-        //console.log("cellClicked[2-41] move", JSON.stringify(move));
-        //console.log("cellClicked[2-2] possibleMoves", JSON.stringify(possibleMoves));
-
         if (isContain(possibleMoves, move)){
           canMakeMove = false; // to prevent making another move
           gameService.makeMove(move);
           selectedPosition = null;
-          //changePieceColor(row, col, myPlayerId, false);
         }
       }
 
@@ -156,7 +130,6 @@ module game {
   }
 
   export function isPieceRed(row: number, col: number): boolean {
-    //console.log("isPieceRed=" + row + " " + col);
     return state.board[row][col] === 'R' && !isSelected(row, col);
   }
 
