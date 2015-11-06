@@ -119,7 +119,7 @@ var game;
         if (state.board[row][col] !== gameLogic.getPlayerColorById(playerId)) {
             return false;
         }
-        var possibleMoves = gameLogic.getPossibleMoves(state.board, playerId, delta);
+        possibleMoves = gameLogic.getPossibleMoves(state.board, playerId, delta);
         console.log("isSelectable row=" + row + " col=" + col + " moves=" + JSON.stringify(possibleMoves));
         if (possibleMoves.length == 0) {
             return false;
@@ -336,7 +336,10 @@ var game;
         return {row: parseInt(eles[1]), col: parseInt(eles[2])+2};
       }*/
     function setDraggingPieceTopLeft(row, col, reset) {
-        if (reset || !gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)) {
+        if (!gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)) {
+            return;
+        }
+        if (reset) {
             draggingPiece.style.left = getLeftShift(draggingStartedRowCol.col) + "%";
             draggingPiece.style.top = 0 + "%";
             //console.log("setDraggingPieceTopLeft[0] draggingPiece.style.left=" + draggingPiece.style.left + " draggingPiece.style.top=" + draggingPiece.style.top);
