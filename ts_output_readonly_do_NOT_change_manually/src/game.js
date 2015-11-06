@@ -252,7 +252,7 @@ var game;
                     //console.log("handleDragEvent[1-5-1] draggingStartedRowCol=" + draggingStartedRowCol);
                     //console.log("handleDragEvent[1-5-2] state.board[row][col]=" + state.board[row][col]);
                     // drag started
-                    if (state.board[row][col]) {
+                    if (isSelectableAt(row, col)) {
                         draggingStartedRowCol = { row: row, col: col };
                         draggingPiece = document.getElementById("piece_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
                         //console.log("handleDragEvent[1--25] draggingPiece=" + JSON.stringify(draggingPiece));
@@ -285,7 +285,7 @@ var game;
             if (draggingStartedRowCol) {
                 setDraggingPieceTopLeft(draggingStartedRowCol.row, draggingStartedRowCol.col, true);
                 draggingStartedRowCol = null;
-                draggingPiece.className.replace(/(?:^|\s)selected(?!\S)/g, '');
+                draggingPiece.className = draggingPiece.className.replace('selected', '');
                 draggingPiece = null;
             }
         }
@@ -301,7 +301,9 @@ var game;
             return;
         }
         //console.log("dragDone! gameLogic.getMovesHistory=" + gameLogic.getMovesHistory(from.row, from.col, to.row, to.col));
-        draggingPiece.className.replace(/(?:^|\s)selected(?!\S)/g, '');
+        console.log("dragDone! before draggingPiece.className=" + draggingPiece.className);
+        draggingPiece.className = draggingPiece.className.replace('selected', '');
+        console.log("dragDone! after draggingPiece.className=" + draggingPiece.className);
         try {
             var myPlayerId = lastUpdateUI.turnIndexAfterMove;
             if (gameLogic.getMovesHistory(from.row, from.col, to.row, to.col)) {
