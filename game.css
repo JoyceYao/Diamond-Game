@@ -48,6 +48,12 @@
   border-color: blue;
 }
 
+.cells .selected {
+  background-color: blue;
+  box-shadow: 0 0 12px blue !important;
+  border-color: blue;
+}
+
 td {
   padding:0 5px 0 5px;
 }

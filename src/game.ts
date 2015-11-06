@@ -283,6 +283,7 @@ module game {
             draggingPiece = document.getElementById("piece_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
             //console.log("handleDragEvent[1--25] draggingPiece=" + JSON.stringify(draggingPiece));
             draggingPiece.style.zIndex = ++nextZIndex + "";
+            draggingPiece.className += " selected";
           }
         }
       }
@@ -310,6 +311,7 @@ module game {
       if (draggingStartedRowCol){
         setDraggingPieceTopLeft(draggingStartedRowCol.row, draggingStartedRowCol.col, true);
         draggingStartedRowCol = null;
+        draggingPiece.className.replace( /(?:^|\s)selected(?!\S)/g , '' );
         draggingPiece = null;
       }
     }
@@ -324,6 +326,7 @@ module game {
     //console.log("dragDone! draggingStartedRowCol.row=" + draggingStartedRowCol.row + " draggingStartedRowCol.col=" + draggingStartedRowCol.col);
     if (from.row === to.row && from.col === to.col){ return; }
     //console.log("dragDone! gameLogic.getMovesHistory=" + gameLogic.getMovesHistory(from.row, from.col, to.row, to.col));
+    draggingPiece.className.replace( /(?:^|\s)selected(?!\S)/g , '' );
 
     try{
         var myPlayerId: number = lastUpdateUI.turnIndexAfterMove;
