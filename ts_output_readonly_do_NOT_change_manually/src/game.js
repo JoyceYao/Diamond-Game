@@ -120,7 +120,7 @@ var game;
             return false;
         }
         possibleMoves = gameLogic.getPossibleMoves(state.board, playerId, delta);
-        console.log("isSelectable row=" + row + " col=" + col + " moves=" + JSON.stringify(possibleMoves));
+        //console.log("isSelectable row=" + row + " col=" + col + " moves=" + JSON.stringify(possibleMoves));
         if (possibleMoves.length == 0) {
             return false;
         }
@@ -276,6 +276,7 @@ var game;
                 // Drag continue
                 //setDraggingPieceTopLeft(getSquareTopLeft(row, col));
                 //console.log("handleDragEvent[1-7]");
+                //if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)){
                 setDraggingPieceTopLeft(row, col, false);
             }
         }
@@ -301,9 +302,9 @@ var game;
             return;
         }
         //console.log("dragDone! gameLogic.getMovesHistory=" + gameLogic.getMovesHistory(from.row, from.col, to.row, to.col));
-        console.log("dragDone! before draggingPiece.className=" + draggingPiece.className);
+        //console.log("dragDone! before draggingPiece.className=" + draggingPiece.className);
         draggingPiece.className = draggingPiece.className.replace('selected', '');
-        console.log("dragDone! after draggingPiece.className=" + draggingPiece.className);
+        //console.log("dragDone! after draggingPiece.className=" + draggingPiece.className);
         try {
             var myPlayerId = lastUpdateUI.turnIndexAfterMove;
             if (gameLogic.getMovesHistory(from.row, from.col, to.row, to.col)) {
@@ -317,11 +318,11 @@ var game;
         ///console.log("commitTheMove row="+row+" col="+col);
         var thisDelta = { rowS: selectedPosition.row, colS: selectedPosition.col, rowE: row, colE: col, playerNo: playerNo };
         var move = gameLogic.createMove(state.board, myPlayerId, thisDelta);
-        canMakeMove = false; // to prevent making another move
-        gameService.makeMove(move);
         selectedPosition = null;
         draggingStartedRowCol = null;
         draggingPiece = null;
+        canMakeMove = false; // to prevent making another move
+        gameService.makeMove(move);
     }
     /*
       function getRotationPosition(row: number, col:number, clientX: number, clientY: number, playerId: number): IPosition {
@@ -336,10 +337,8 @@ var game;
         return {row: parseInt(eles[1]), col: parseInt(eles[2])+2};
       }*/
     function setDraggingPieceTopLeft(row, col, reset) {
-        if (!gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)) {
-            return;
-        }
-        if (reset) {
+        //if (reset || !gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)){
+        if (reset || !isValidPosition(row, col)) {
             draggingPiece.style.left = getLeftShift(draggingStartedRowCol.col) + "%";
             draggingPiece.style.top = 0 + "%";
             //console.log("setDraggingPieceTopLeft[0] draggingPiece.style.left=" + draggingPiece.style.left + " draggingPiece.style.top=" + draggingPiece.style.top);
@@ -351,6 +350,12 @@ var game;
         draggingPiece.style.left = getLeftShift(col) + "%";
         draggingPiece.style.top = (row - draggingStartedRowCol.row) * 100 + "%";
         //console.log("setDraggingPieceTopLeft[3]: left" + draggingPiece.style.left + " top=" + draggingPiece.style.top);
+    }
+    function isValidPosition(row, col) {
+        if (state.board[row][col] === '' && (row + col) % 2 === 1) {
+            return true;
+        }
+        return false;
     }
 })(game || (game = {}));
 angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])

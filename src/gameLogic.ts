@@ -29,8 +29,8 @@ module gameLogic {
 
   export function getMovesHistory(rowS: number, colS: number, rowE: number, colE: number): BoardDelta[] {
     var key = rowS+"_"+colS+"_"+rowE+"_"+colE;
-    console.log("getMovesHistory key=" + key);
-    console.log("getMovesHistory map=" + JSON.stringify(movesHistoryMap));
+    //console.log("getMovesHistory key=" + key);
+    //console.log("getMovesHistory map=" + JSON.stringify(movesHistoryMap));
     return movesHistoryMap[key];
   }
 
@@ -199,8 +199,8 @@ module gameLogic {
             nextDeltaList.push({rowS:rowS, colS:colS, rowE:jumpRow, colE:jumpCol, playerNo:delta[thisDeltaIdx].playerNo});
             // add to history map
             addMoveHistory(nextDeltaList);
-            console.log("getPossibleMoves delta=" + JSON.stringify(delta));
-            console.log("getPossibleMoves nextDeltaList=" + JSON.stringify(nextDeltaList));
+            //console.log("getPossibleMoves delta=" + JSON.stringify(delta));
+            //console.log("getPossibleMoves nextDeltaList=" + JSON.stringify(nextDeltaList));
             markAsVisited(possibleMoveBoard, jumpRow, jumpCol);
             var nextMove = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDeltaList, originalRow, originalCol);
             if (nextMove.length > 0) { possibleMoves.push.apply(possibleMoves, nextMove); }
@@ -219,7 +219,7 @@ module gameLogic {
     var rowE = deltaList[deltaList.length-1].rowE;
     var colE = deltaList[deltaList.length-1].colE;
     var key = rowS+"_"+colS+"_"+rowE+"_"+colE;
-    console.log("addMoveHistory key=" + key);
+    //console.log("addMoveHistory key=" + key);
     var prevData = movesHistoryMap[key];
     // if the same move exists and with shorter path, return
     if (prevData && prevData.length <= deltaList.length){
@@ -231,7 +231,7 @@ module gameLogic {
     if (newDeltaList.length > 1){
       newDeltaList.splice(0, 1);
     }
-    console.log("addMoveHistory newDeltaList=" + JSON.stringify(newDeltaList));
+    //console.log("addMoveHistory newDeltaList=" + JSON.stringify(newDeltaList));
     movesHistoryMap[key] = newDeltaList;
   }
 

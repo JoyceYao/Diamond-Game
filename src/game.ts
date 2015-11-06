@@ -141,7 +141,7 @@ module game {
     }
 
     possibleMoves = gameLogic.getPossibleMoves(state.board, playerId, delta);
-    console.log("isSelectable row=" + row + " col=" + col + " moves=" + JSON.stringify(possibleMoves));
+    //console.log("isSelectable row=" + row + " col=" + col + " moves=" + JSON.stringify(possibleMoves));
     if (possibleMoves.length == 0){
       return false;
     }
@@ -302,7 +302,9 @@ module game {
         // Drag continue
         //setDraggingPieceTopLeft(getSquareTopLeft(row, col));
           //console.log("handleDragEvent[1-7]");
-        setDraggingPieceTopLeft(row, col, false);
+          //if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)){
+            setDraggingPieceTopLeft(row, col, false);
+          //}
       }
     }
     if (type === "touchend" || type === "touchcancel" || type === "touchleave") {
@@ -326,9 +328,9 @@ module game {
     //console.log("dragDone! draggingStartedRowCol.row=" + draggingStartedRowCol.row + " draggingStartedRowCol.col=" + draggingStartedRowCol.col);
     if (from.row === to.row && from.col === to.col){ return; }
     //console.log("dragDone! gameLogic.getMovesHistory=" + gameLogic.getMovesHistory(from.row, from.col, to.row, to.col));
-    console.log("dragDone! before draggingPiece.className=" + draggingPiece.className);
+    //console.log("dragDone! before draggingPiece.className=" + draggingPiece.className);
     draggingPiece.className = draggingPiece.className.replace('selected' , '');
-    console.log("dragDone! after draggingPiece.className=" + draggingPiece.className);
+    //console.log("dragDone! after draggingPiece.className=" + draggingPiece.className);
 
     try{
         var myPlayerId: number = lastUpdateUI.turnIndexAfterMove;
@@ -342,13 +344,14 @@ module game {
 
   function commitTheMove(row: number, col: number, myPlayerId: number){
     ///console.log("commitTheMove row="+row+" col="+col);
+
     var thisDelta: BoardDelta = {rowS: selectedPosition.row, colS: selectedPosition.col, rowE:row, colE:col, playerNo:playerNo};
     var move = gameLogic.createMove(state.board, myPlayerId, thisDelta);
-    canMakeMove = false; // to prevent making another move
-    gameService.makeMove(move);
     selectedPosition = null;
     draggingStartedRowCol = null;
     draggingPiece = null;
+    canMakeMove = false; // to prevent making another move
+    gameService.makeMove(move);
   }
 /*
   function getRotationPosition(row: number, col:number, clientX: number, clientY: number, playerId: number): IPosition {
@@ -364,11 +367,8 @@ module game {
   }*/
 
   function setDraggingPieceTopLeft(row: number, col: number, reset: boolean) {
-    if (!gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)){
-      return;
-    }
-
-    if (reset){
+    //if (reset || !gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)){
+    if (reset || !isValidPosition(row, col)){
       draggingPiece.style.left = getLeftShift(draggingStartedRowCol.col) + "%";
       draggingPiece.style.top = 0 + "%";
       //console.log("setDraggingPieceTopLeft[0] draggingPiece.style.left=" + draggingPiece.style.left + " draggingPiece.style.top=" + draggingPiece.style.top);
@@ -383,6 +383,13 @@ module game {
     draggingPiece.style.top = (row - draggingStartedRowCol.row)*100 + "%";
 
     //console.log("setDraggingPieceTopLeft[3]: left" + draggingPiece.style.left + " top=" + draggingPiece.style.top);
+  }
+
+  function isValidPosition(row: number, col: number): boolean {
+    if (state.board[row][col] === '' && (row + col)%2 === 1){
+      return true;
+    }
+    return false;
   }
 
 /*
