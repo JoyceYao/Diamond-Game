@@ -4,30 +4,48 @@
 .b {
   border-bottom: 4pt solid black;
 }
+/*
+.cells:hover {
+    -webkit-box-shadow: 0 0 5px blue;
+       -moz-box-shadow: 0 0 5px blue;
+            box-shadow: 0 0 5px blue;
 
-.slowlyAppear {
-	-webkit-animation: slowlyAppear 0.5s linear;
-	-moz-animation: slowlyAppear 0.5s linear;
-	-ms-animation: slowlyAppear 0.5s linear;
-	-o-animation: slowlyAppear 0.5s linear;
-	animation: slowlyAppear 0.5s linear;
+    -webkit-border-radius: 20px;
+       -moz-border-radius: 20px;
+            border-radius: 20px;
+
+    -webkit-transition: box-shadow .4s ease;
+       -moz-transition: box-shadow .4s ease;
+        -ms-transition: box-shadow .4s ease;
+         -o-transition: box-shadow .4s ease;
+            transition: box-shadow .4s ease;
 }
 
-@-webkit-keyframes slowlyAppear {
-  from {opacity: 0.1;}
-  to {opacity: 1;}
+.cells:hover {
+    -webkit-box-shadow: 0 0 5px blue;
+       -moz-box-shadow: 0 0 5px blue;
+            box-shadow: 0 0 0 5px blue;
 }
-@-moz-keyframes slowlyAppear {
-  from {opacity: 0.1;}
-  to {opacity: 1;}
+.cells:hover {
+  background-color: #9b59b6;
+  box-shadow: 0 0 12px #9b59b6 !important;
+  border-color: #9b59b6;
 }
-@-o-keyframes slowlyAppear {
-  from {opacity: 0.1;}
-  to {opacity: 1;}
+
+*/
+
+
+.cells {
+    width: 10%;
+    height: 10%;
+    border-radius: 50%;
+    behavior: url(PIE.htc); /* remove if you don't care about IE8 */
 }
-@keyframes slowlyAppear {
-  from {opacity: 0.1;}
-  to {opacity: 1;}
+
+.cells:hover {
+  background-color: blue;
+  box-shadow: 0 0 12px blue !important;
+  border-color: blue;
 }
 
 td {
@@ -39,7 +57,6 @@ td {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: contain;
-  top: 1%
 }
 
 .left-slide-column {
@@ -69,51 +86,3 @@ td {
 	-o-transform: rotate(240deg);
 	transform: rotate(240deg);
 }
-
-/*
-.rows {
-  position:absolute;
-  width:100%; height:8%;
-  margin: 0 auto;
-}
-
-.cols {
-  position:absolute;
-  width:8%; height:100%;
-  margin: 0 auto;
-}
-
-#rows0 { top:0%; }
-#rows1 { top:7.86%; }
-#rows2 { top:15.72%; }
-#rows3 { top:23.58%; }
-#rows4 { top:31.44%; }
-#rows5 { top:39.3%; }
-#rows6 { top:47.16%; }
-#rows7 { top:55.02%; }
-#rows8 { top:62.88%; }
-#rows9 { top:70.74%; }
-#rows10 { top:78.6%; }
-#rows11 { top:86.46%; }
-#rows12 { top:94.32%; }
-
-#cols0 { left:5.5%; }
-#cols1 { left:10.09%; }
-#cols2 { left:14.68%; }
-#cols3 { left:19.27%; }
-#cols4 { left:23.86%; }
-#cols5 { left:28.45%; }
-#cols6 { left:33.04%; }
-#cols7 { left:37.63%; }
-#cols8 { left:42.22%; }
-#cols9 { left:46.81%; }
-#cols10 { left:51.4%; }
-#cols11 { left:55.99%; }
-#cols12 { left:60.58%; }
-#cols13 { left:65.17%; }
-#cols14 { left:69.76%; }
-#cols15 { left:74.35%; }
-#cols16 { left:78.94%; }
-#cols17 { left:83.53%; }
-#cols18 { left:88.12%; }
-*/

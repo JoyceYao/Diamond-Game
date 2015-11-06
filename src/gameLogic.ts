@@ -12,6 +12,8 @@ interface IState {
 }
 
 var playersMap : { [key:number]:string; } = {};
+// use the start and end position as key, store all intermediate positions for this move
+let movesHistoryMap : { [key:string]:BoardDelta[]; } = {};
 
 module gameLogic {
   /** Map playerIdx with player color */
@@ -23,6 +25,18 @@ module gameLogic {
 
   export function getPlayerColorById(playerId: number): string {
     return playersMap[playerId];
+  }
+
+  export function getMovesHistory(rowS: number, colS: number, rowE: number, colE: number): BoardDelta[] {
+    var key = rowS+"_"+colS+"_"+rowE+"_"+colE;
+    console.log("getMovesHistory key=" + key);
+    console.log("getMovesHistory map=" + JSON.stringify(movesHistoryMap));
+    return movesHistoryMap[key];
+  }
+
+  /* clear moveHistoryMap after animation */
+  export function clearMoveHistory(){
+    movesHistoryMap = {};
   }
 
   /** Returns the initial TicTacToe board, which is a 3x3 matrix containing ''.  */
@@ -136,6 +150,8 @@ module gameLogic {
    * Returns an empty array if the game is over.
    */
   export function getPossibleMoves(board: Board, turnIndexBeforeMove: number, delta: BoardDelta): IMove[] {
+    //movesHistoryMap = {}; /* clear moveHistoryMap for new storage */
+    //console.log("getPossibleMoves clear map!!");
     var possibleMoves: IMove[] = [];
     var adjPosition: number[][] = [[0, -2], [-1, -1], [-1, 1], [0, 2], [1, -1], [1, 1]];
     var possibleMoveBoard = angular.copy(board);
@@ -145,6 +161,7 @@ module gameLogic {
       var nextDalta: BoardDelta = {rowS:delta.rowS, colS:delta.colS, rowE:nextRow, colE:nextCol, playerNo:delta.playerNo};
       try {
         possibleMoves.push(createMove(board, turnIndexBeforeMove, nextDalta));
+        addMoveHistory([nextDalta]);
         markAsVisited(possibleMoveBoard, nextRow, nextCol);
       } catch (e) {
         // The cell in that position was full.
@@ -152,7 +169,7 @@ module gameLogic {
     }
 
     try {
-      var jumpMoves = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, delta, delta.rowS, delta.colS);
+      var jumpMoves = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, [delta], delta.rowS, delta.colS);
       if(jumpMoves){ possibleMoves.push.apply(possibleMoves, jumpMoves); }
     } catch (e) {}
 
@@ -162,30 +179,60 @@ module gameLogic {
 
   /** Returns all possible moves from jumping move*/
   export function getPossibleJumpMoves(board: Board, possibleMoveBoard: Board,
-    adjPosition: number[][], turnIndexBeforeMove: number, delta: BoardDelta, originalRow: number, originalCol: number): IMove[]{
+    adjPosition: number[][], turnIndexBeforeMove: number, delta: BoardDelta[], originalRow: number, originalCol: number): IMove[]{
     var possibleMoves: IMove[] = [];
-    var rowS= delta.rowE;
-    var colS = delta.colE;
-    for(var i=0; i<adjPosition.length; i++){
+    var thisDeltaIdx = delta.length-1;
+    var rowS= delta[thisDeltaIdx].rowE;
+    var colS = delta[thisDeltaIdx].colE;
+    for (var i=0; i<adjPosition.length; i++){
       var nextRow: number = rowS+adjPosition[i][0];
       var nextCol: number = colS+adjPosition[i][1];
       try {
-        if(isOccupied(board, nextRow, nextCol)){
+        if (isOccupied(board, nextRow, nextCol)){
           var jumpRow: number = rowS+adjPosition[i][0]*2;
           var jumpCol: number = colS+adjPosition[i][1]*2;
-          var nextDelta: BoardDelta = {rowS:originalRow, colS:originalCol, rowE:jumpRow, colE:jumpCol, playerNo:delta.playerNo};
+          var nextDelta: BoardDelta = {rowS:originalRow, colS:originalCol, rowE:jumpRow, colE:jumpCol, playerNo:delta[thisDeltaIdx].playerNo};
           var move = createMove(possibleMoveBoard, turnIndexBeforeMove, nextDelta);
-          if(move) {
+          if (move) {
             possibleMoves.push(move);
+            var nextDeltaList : BoardDelta[] = angular.copy(delta);
+            nextDeltaList.push({rowS:rowS, colS:colS, rowE:jumpRow, colE:jumpCol, playerNo:delta[thisDeltaIdx].playerNo});
+            // add to history map
+            addMoveHistory(nextDeltaList);
+            console.log("getPossibleMoves delta=" + JSON.stringify(delta));
+            console.log("getPossibleMoves nextDeltaList=" + JSON.stringify(nextDeltaList));
             markAsVisited(possibleMoveBoard, jumpRow, jumpCol);
-            var nextMove = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDelta, originalRow, originalCol);
-            if(nextMove.length > 0) { possibleMoves.push.apply(possibleMoves, nextMove); }
+            var nextMove = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDeltaList, originalRow, originalCol);
+            if (nextMove.length > 0) { possibleMoves.push.apply(possibleMoves, nextMove); }
           }
         }
       } catch (e){  }
     }
     //console.log("getPossibleJumpMoves possibleMoves[2]=" + JSON.stringify(possibleMoves));
     return possibleMoves;
+  }
+
+  function addMoveHistory(deltaList: BoardDelta[]){
+    if (deltaList.length == 0){ return; }
+    var rowS = deltaList[0].rowS;
+    var colS = deltaList[0].colS;
+    var rowE = deltaList[deltaList.length-1].rowE;
+    var colE = deltaList[deltaList.length-1].colE;
+    var key = rowS+"_"+colS+"_"+rowE+"_"+colE;
+    console.log("addMoveHistory key=" + key);
+    var prevData = movesHistoryMap[key];
+    // if the same move exists and with shorter path, return
+    if (prevData && prevData.length <= deltaList.length){
+      return;
+    }
+
+    var newDeltaList = angular.copy(deltaList);
+    // remove the first dummy delta
+    if (newDeltaList.length > 1){
+      newDeltaList.splice(0, 1);
+    }
+    console.log("addMoveHistory newDeltaList=" + JSON.stringify(newDeltaList));
+    movesHistoryMap[key] = newDeltaList;
   }
 
   /** Add an '@' mark onto the board representing the position had been visited*/
