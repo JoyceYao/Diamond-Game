@@ -96,12 +96,12 @@ module game {
       // then the animation will be paused until the javascript finishes.
       //console.log("updateUI[3-1] state.delta=", state.delta);
 
-      if (!state.delta) {
+      //if (!state.delta) {
         // This is the first move in the match, so
         // there is not going to be an animation, so
         // call sendComputerMove() now (can happen in ?onlyAIs mode)
         sendComputerMove();
-      }
+      //}
     }
   }
 
@@ -174,8 +174,8 @@ module game {
   export function getStyle(row: number, col: number): {} {
     if (state.delta && state.delta.rowE === row && state.delta.colE === col) {
       return {top: "0%", left: "0%", position: "relative", width: "90%", height: "100%",
-              "-webkit-animation": "moveAnimation 2s",
-              "animation": "moveAnimation 2s"};
+              "-webkit-animation": "moveAnimation 1s",
+              "animation": "moveAnimation 1s"};
     } else {
       return {width: "90%", height: "100%"};
     }

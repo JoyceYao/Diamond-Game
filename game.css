@@ -42,18 +42,11 @@
     behavior: url(PIE.htc); /* remove if you don't care about IE8 */
 }
 
-.cells:focus {
-  background-color: blue;
-  box-shadow: 0 0 12px blue !important;
-  border-color: blue;
-}
-
-/*
 .cells:hover, .cells:focus, .cells:active {
   background-color: blue;
   box-shadow: 0 0 12px blue !important;
   border-color: blue;
-}*/
+}
 
 td {
   padding:0 5px 0 5px;
