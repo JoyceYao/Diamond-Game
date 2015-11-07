@@ -344,7 +344,11 @@ var gameLogic;
     var draggingStartPosi = null;
     var nextZIndex = 61;
     function init() {
-        //console.log("Translation of 'RULES_OF_DIAMOND_GAME' is " + translate('RULES_OF_DIAMOND_GAME'));
+        console.log("Translation of 'RULES_OF_DIAMOND_GAME' is " + translate('RULES_OF_DIAMOND_GAME'));
+        console.log("Translation of 'RULES_SLIDE1' is " + translate('RULES_SLIDE1'));
+        console.log("Translation of 'RULES_SLIDE2' is " + translate('RULES_SLIDE1'));
+        console.log("Translation of 'RULES_SLIDE3' is " + translate('RULES_SLIDE1'));
+        console.log("Translation of 'RULES_SLIDE4' is " + translate('RULES_SLIDE1'));
         resizeGameAreaService.setWidthToHeight(1);
         gameService.setGame({
             minNumberOfPlayers: 2,
