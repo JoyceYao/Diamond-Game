@@ -14,6 +14,7 @@ module game {
   let colsNum = 19;
   let draggingStartedRowCol: IPosition = null; // The {row: YY, col: XX} where dragging started.
   let draggingPiece : HTMLElement = null;
+  let draggingStartPosi : HTMLElement = null;
   let nextZIndex = 61;
   interface IPosition {
     row: number;
@@ -281,9 +282,11 @@ module game {
           if (isSelectableAt(row, col)){
             draggingStartedRowCol = {row: row, col: col};
             draggingPiece = document.getElementById("piece_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
-            //console.log("handleDragEvent[1--25] draggingPiece=" + JSON.stringify(draggingPiece));
             draggingPiece.style.zIndex = ++nextZIndex + "";
             draggingPiece.className += " selected";
+
+            draggingStartPosi = document.getElementById("cell_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
+            draggingStartPosi.className += " selected";
           }
         }
       }
@@ -314,6 +317,7 @@ module game {
         setDraggingPieceTopLeft(draggingStartedRowCol.row, draggingStartedRowCol.col, true);
         draggingStartedRowCol = null;
         draggingPiece.className = draggingPiece.className.replace('selected' , '');
+        draggingStartPosi.className = draggingStartPosi.className.replace('selected' , '');
         draggingPiece = null;
       }
     }
@@ -330,7 +334,7 @@ module game {
     //console.log("dragDone! gameLogic.getMovesHistory=" + gameLogic.getMovesHistory(from.row, from.col, to.row, to.col));
     //console.log("dragDone! before draggingPiece.className=" + draggingPiece.className);
     draggingPiece.className = draggingPiece.className.replace('selected' , '');
-    //console.log("dragDone! after draggingPiece.className=" + draggingPiece.className);
+    draggingStartPosi.className = draggingStartPosi.className.replace('selected' , '');
 
     try{
         var myPlayerId: number = lastUpdateUI.turnIndexAfterMove;
@@ -338,13 +342,10 @@ module game {
           setDraggingPieceTopLeft(from.row, from.col, true);
           commitTheMove(to.row, to.col, myPlayerId);
         }
-        //console.log("handleDragEvent[1-8]");
     } catch (Exception){}
   }
 
   function commitTheMove(row: number, col: number, myPlayerId: number){
-    ///console.log("commitTheMove row="+row+" col="+col);
-
     var thisDelta: BoardDelta = {rowS: selectedPosition.row, colS: selectedPosition.col, rowE:row, colE:col, playerNo:playerNo};
     var move = gameLogic.createMove(state.board, myPlayerId, thisDelta);
     selectedPosition = null;
@@ -367,22 +368,15 @@ module game {
   }*/
 
   function setDraggingPieceTopLeft(row: number, col: number, reset: boolean) {
-    //if (reset || !gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)){
     if (reset || !isValidPosition(row, col)){
       draggingPiece.style.left = getLeftShift(draggingStartedRowCol.col) + "%";
       draggingPiece.style.top = 0 + "%";
-      //console.log("setDraggingPieceTopLeft[0] draggingPiece.style.left=" + draggingPiece.style.left + " draggingPiece.style.top=" + draggingPiece.style.top);
       return;
     }
 
     var orgTop = getTopShift(draggingStartedRowCol.row);
-    //console.log("setDraggingPieceTopLeft[1] row=" + row);
-    //console.log("setDraggingPieceTopLeft[2] draggingStartedRowCol.row=" + draggingStartedRowCol.row);
-
     draggingPiece.style.left = getLeftShift(col) + "%";
     draggingPiece.style.top = (row - draggingStartedRowCol.row)*100 + "%";
-
-    //console.log("setDraggingPieceTopLeft[3]: left" + draggingPiece.style.left + " top=" + draggingPiece.style.top);
   }
 
   function isValidPosition(row: number, col: number): boolean {

@@ -53,8 +53,11 @@ module.exports = function(grunt) {
             'http://yoav-zibin.github.io/emulator/main.css',
             'dist/everything.min.js',
             'game.css',
+            'imgs/Diamond_Game.svg',
             'imgs/HelpSlide1.png',
-            'imgs/HelpSlide2.png'
+            'imgs/HelpSlide2.png',
+            'imgs/HelpSlide3.png',
+            'imgs/HelpSlide4.png'
           ],
           network: [
             'dist/everything.min.js.map',
@@ -98,9 +101,6 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', [
-      'karma',
       'concat', 'uglify',
-      'processhtml', 'manifest',
-      'http-server', 'protractor']);
-
+      'processhtml', 'manifest']); //'http-server', 'protractor,       'karma',
 };
