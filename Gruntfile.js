@@ -54,6 +54,7 @@ module.exports = function(grunt) {
             'dist/everything.min.js',
             'game.css',
             'imgs/Diamond_Game.svg',
+            'imgs/Diamond_Game_mini.svg',
             'imgs/HelpSlide1.png',
             'imgs/HelpSlide2.png',
             'imgs/HelpSlide3.png',

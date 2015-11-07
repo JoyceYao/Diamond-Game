@@ -4,36 +4,6 @@
 .b {
   border-bottom: 4pt solid black;
 }
-/*
-.cells:hover {
-    -webkit-box-shadow: 0 0 5px blue;
-       -moz-box-shadow: 0 0 5px blue;
-            box-shadow: 0 0 5px blue;
-
-    -webkit-border-radius: 20px;
-       -moz-border-radius: 20px;
-            border-radius: 20px;
-
-    -webkit-transition: box-shadow .4s ease;
-       -moz-transition: box-shadow .4s ease;
-        -ms-transition: box-shadow .4s ease;
-         -o-transition: box-shadow .4s ease;
-            transition: box-shadow .4s ease;
-}
-
-.cells:hover {
-    -webkit-box-shadow: 0 0 5px blue;
-       -moz-box-shadow: 0 0 5px blue;
-            box-shadow: 0 0 0 5px blue;
-}
-.cells:hover {
-  background-color: #9b59b6;
-  box-shadow: 0 0 12px #9b59b6 !important;
-  border-color: #9b59b6;
-}
-
-*/
-
 
 .selected {
   width: 10%;
@@ -44,12 +14,6 @@
   box-shadow: 0 0 12px blue !important;
   border-color: blue;
 }
-/*
-.cells:hover, .cells:focus, .cells:active {
-  background-color: blue;
-  box-shadow: 0 0 12px blue !important;
-  border-color: blue;
-}*/
 
 td {
   padding:0 5px 0 5px;
