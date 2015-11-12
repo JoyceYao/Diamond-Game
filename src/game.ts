@@ -26,11 +26,6 @@ module game {
   }
 
   export function init() {
-    console.log("Translation of 'RULES_OF_DIAMOND_GAME' is " + translate('RULES_OF_DIAMOND_GAME'));
-    console.log("Translation of 'RULES_SLIDE1' is " + translate('RULES_SLIDE1'));
-    console.log("Translation of 'RULES_SLIDE2' is " + translate('RULES_SLIDE1'));
-    console.log("Translation of 'RULES_SLIDE3' is " + translate('RULES_SLIDE1'));
-    console.log("Translation of 'RULES_SLIDE4' is " + translate('RULES_SLIDE1'));
     resizeGameAreaService.setWidthToHeight(1);
     gameService.setGame({
       minNumberOfPlayers: 2,
@@ -80,6 +75,7 @@ module game {
     playerId = params.turnIndexAfterMove;
 
     console.log("updateUI[1] playerId=" + playerId);
+    console.log("params.playMode=" + params.playMode);
     if (state.delta && params.playMode != "passAndPlay"){
       modifyMoveCSS(state.delta);
     }
@@ -197,12 +193,11 @@ module game {
   function modifyMoveCSS(delta: BoardDelta){
     var moveHistory: BoardDelta[] = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
     //console.log("moveHistory=" + moveHistory);
-    var steps = moveHistory.length;
+    if (!moveHistory){ return; }
 
-    //console.log("moveHistory.length=" + moveHistory.length);
+    var steps = moveHistory.length;
     var finalRow = moveHistory[moveHistory.length-1].rowE;
     var finalCol = moveHistory[moveHistory.length-1].colE;
-
     var cssRules = "";
     var interval = 100/steps;
     for (var i=0; i<steps; i++){
@@ -211,7 +206,6 @@ module game {
       var left = (moveHistory[i].colS-finalCol)*100/2;
       cssRules += interval*i + '% {top: ' + top + '%; left: ' + left + '%;}';
     }
-
     //console.log("modifyMoveCSS cssRules=" + cssRules);
 
     var style = document.createElement('style');
@@ -384,7 +378,7 @@ module game {
   }
 
   function isValidPosition(row: number, col: number): boolean {
-    if (state.board[row][col] === '' && (row + col)%2 === 1){
+    if (state.board[row][col] != '#' && (row + col)%2 === 1){
       return true;
     }
     return false;
@@ -430,7 +424,7 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
   $rootScope['game'] = game;
   translate.setLanguage('en',  {
     RULES_OF_DIAMOND_GAME:"Rules of Diamond Game",
-    RULES_SLIDE1:"You and your opponent take turns to move your own piece. The first player's piece is red, second is green, third is yellow, etc.",
+    RULES_SLIDE1:"You and your opponent take turns to move your own piece. The first player's piece is red, second is green, third is yellow",
     RULES_SLIDE2:"You can move your piece to an adjancent empty position",
     RULES_SLIDE3:"Or jump over any other pieces for any consecutive jump steps",
     RULES_SLIDE4:"The first to put all pieces into the other end of board wins.",
