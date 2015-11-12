@@ -10,9 +10,15 @@
   height: 10%;
   border-radius: 50%;
   behavior: url(PIE.htc); /* remove if you don't care about IE8 */
-  background-color: rgba(0, 0, 255, 0.5);;
-  box-shadow: 0 0 12px blue !important;
+  background-color: rgba(0, 0, 255, 0.5);
+  box-shadow: 0 0 20px 3px blue;
   border-color: blue;
+}
+
+.canDrop {
+  background-color: rgba(204, 0, 204, 0.8) !important;
+  box-shadow: 0 0 20px 5px #cc0099 !important;
+  border-color: #cc0099 !important;
 }
 
 td {

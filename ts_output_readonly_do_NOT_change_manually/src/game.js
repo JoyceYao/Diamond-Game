@@ -341,6 +341,19 @@ var game;
         return {row: parseInt(eles[1]), col: parseInt(eles[2])+2};
       }*/
     function setDraggingPieceTopLeft(row, col, reset) {
+        /* if this is a valid drop position, change the glowing color */
+        if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)) {
+            if (draggingPiece.className.indexOf("canDrop") < 0) {
+                draggingPiece.className += " canDrop";
+            }
+            if (draggingStartPosi.className.indexOf("canDrop") < 0) {
+                draggingStartPosi.className += "canDrop";
+            }
+        }
+        else {
+            draggingPiece.className = draggingPiece.className.replace('canDrop', '');
+            draggingStartPosi.className = draggingStartPosi.className.replace('canDrop', '');
+        }
         if (reset || !isValidPosition(row, col)) {
             draggingPiece.style.left = getLeftShift(draggingStartedRowCol.col) + "%";
             draggingPiece.style.top = 0 + "%";

@@ -29,20 +29,28 @@ var aiService;
         var deltaList = [];
         var myPieces = getMyPiecePosition(board, playerIndex);
         var stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
+        var maxStartPoint = 0;
         /* for each move result, calculate the distance reduced by the movement,
           choose the move that reduce the most distance */
         for (var i = 0; i < stateList.length; i++) {
             var thisDist = 0;
             var thisBoard = stateList[i].board;
             var thisDeltaList = stateList[i].deltaList;
+            var thisStartPoint = 0;
             for (var j = 0; j < thisDeltaList.length; j++) {
                 var thisDelta = thisDeltaList[j];
+                if (j === 0) {
+                    thisStartPoint = getPositionNo(thisDelta.rowS, thisDelta.colS, playerIndex);
+                }
                 var dist = getRowDiff(thisDelta.rowS, thisDelta.colS, thisDelta.rowE, thisDelta.colE, playerIndex);
                 thisDist += dist;
             }
-            if (bestDelta === null || thisDist > maxDist) {
+            /* prefer long distance movement and higher starting row (pieces that fall behind) */
+            if (bestDelta === null || thisDist > maxDist ||
+                (thisDist === maxDist && thisStartPoint > maxStartPoint)) {
                 maxDist = thisDist;
                 bestDelta = thisDeltaList[0];
+                maxStartPoint = thisStartPoint;
             }
         }
         // if don't find a good move within one steps (very close to target board)
@@ -105,6 +113,10 @@ var aiService;
         var startRow = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
         var endRow = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
         return startRow - endRow;
+    }
+    /* input playerIdx and a position on the board, output the rowNo for the player at this position */
+    function getPositionNo(row, col, playerIndex) {
+        return parseInt(rowNoByPlayer[playerIndex][row][col]);
     }
     /* representing the prefer move direction for each player, 9-12 -> start area, 0-3 -> target area */
     var rowNoByPlayer = [[['#', '#', '#', '#', '#', '#', '#', '#', '#', '0', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
