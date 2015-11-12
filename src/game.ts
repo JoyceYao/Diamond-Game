@@ -333,6 +333,8 @@ module game {
     //console.log("dragDone! before draggingPiece.className=" + draggingPiece.className);
     draggingPiece.className = draggingPiece.className.replace('selected' , '');
     draggingStartPosi.className = draggingStartPosi.className.replace('selected' , '');
+    draggingPiece.className = draggingPiece.className.replace('canDrop' , '');
+    draggingStartPosi.className = draggingStartPosi.className.replace('canDrop' , '');
 
     try{
         var myPlayerId: number = lastUpdateUI.turnIndexAfterMove;
