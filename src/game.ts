@@ -40,7 +40,7 @@ module game {
     document.addEventListener("oanimationend", animationEndedCallback, false); // Opera
 
     gameArea = document.getElementById("gameArea");
-    console.log("gameArea=" + JSON.stringify(gameArea));
+    //console.log("gameArea=" + JSON.stringify(gameArea));
 
     dragAndDropService.addDragListener("gameArea", handleDragEvent);
 

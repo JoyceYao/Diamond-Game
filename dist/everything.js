@@ -356,7 +356,7 @@ var gameLogic;
         document.addEventListener("webkitAnimationEnd", animationEndedCallback, false); // WebKit
         document.addEventListener("oanimationend", animationEndedCallback, false); // Opera
         gameArea = document.getElementById("gameArea");
-        console.log("gameArea=" + JSON.stringify(gameArea));
+        //console.log("gameArea=" + JSON.stringify(gameArea));
         dragAndDropService.addDragListener("gameArea", handleDragEvent);
         gameLogic.initialPLayersMap();
         ////createRotationMapping();
