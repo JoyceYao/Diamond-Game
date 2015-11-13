@@ -172,6 +172,7 @@ module game {
   }
 
   export function getStyle(row: number, col: number): {} {
+    console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
     if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "playAndPass") {
       return {top: "50%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", transform: "translateY(-50%)",
               "-webkit-animation": "moveAnimation 1s",
