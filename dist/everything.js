@@ -447,7 +447,6 @@ var gameLogic;
             return false;
         }
         possibleMoves = gameLogic.getPossibleMoves(state.board, playerId, delta);
-        //console.log("isSelectable row=" + row + " col=" + col + " moves=" + JSON.stringify(possibleMoves));
         if (possibleMoves.length == 0) {
             return false;
         }
@@ -480,7 +479,7 @@ var gameLogic;
         }
     }
     function getStyle(row, col) {
-        if (state.delta && state.delta.rowE === row && state.delta.colE === col) {
+        if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "playAndPass") {
             return { top: "0%", left: "0%", position: "relative", width: "90%", height: "100%",
                 "-webkit-animation": "moveAnimation 1s",
                 "animation": "moveAnimation 1s" };
@@ -498,7 +497,6 @@ var gameLogic;
     }
     function modifyMoveCSS(delta) {
         var moveHistory = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
-        //console.log("moveHistory=" + moveHistory);
         if (!moveHistory) {
             return;
         }
@@ -508,12 +506,10 @@ var gameLogic;
         var cssRules = "";
         var interval = 100 / steps;
         for (var i = 0; i < steps; i++) {
-            //console.log("moveHistory[i]=" + JSON.stringify(moveHistory[i]));
             var top = (moveHistory[i].rowS - finalRow) * 100;
             var left = (moveHistory[i].colS - finalCol) * 100 / 2;
             cssRules += interval * i + '% {top: ' + top + '%; left: ' + left + '%;}';
         }
-        //console.log("modifyMoveCSS cssRules=" + cssRules);
         var style = document.createElement('style');
         style.type = 'text/css';
         style.innerHTML = ' @-webkit-keyframes moveAnimation { ' + cssRules + ' }';
@@ -528,8 +524,6 @@ var gameLogic;
         var x = clientX - gameArea.offsetLeft;
         var y = clientY - gameArea.offsetTop;
         var row, col;
-        //console.log("handleDragEvent[0] x=" + x + " y=" + y);
-        //console.log("handleDragEvent[0] selectedPosition=" + JSON.stringify(selectedPosition));
         // Is outside gameArea?
         if (x < 0 || y < 0 || x >= gameArea.clientWidth || y >= gameArea.clientHeight) {
             if (draggingPiece) {
@@ -548,7 +542,6 @@ var gameLogic;
                 if (x >= gameArea.clientWidth) {
                     thisCol = colsNum - 1;
                 }
-                //console.log("handleDragEvent[1-1] thisRow=" + thisRow + " thisCol=" + thisCol);
                 setDraggingPieceTopLeft(thisRow, thisCol, false);
             }
             else {
@@ -566,47 +559,32 @@ var gameLogic;
             else {
                 col = Math.floor(((x / gameArea.clientWidth) * 100 - 5.5) / 9.18) * 2;
             }
-            //console.log("handleDragEvent[1-2] clientHeight=" + gameArea.clientHeight + " clientWidth=" + gameArea.clientWidth);
-            //console.log("handleDragEvent[1-2] row=" + row + " col=" + col);
-            //console.log("  gameArea.offsetLeft=" + gameArea.offsetLeft + " gameArea.offsetTop=" + gameArea.offsetLeft);
-            //console.log("handleDragEvent[1-2-2] row=" + row + " col=" + col);
             if (type === "touchstart") {
                 var delta = { rowS: row, colS: col, rowE: row, colE: col, playerNo: playerNo };
-                //console.log("handleDragEvent[1-4] myPlayerId =" + myPlayerId );
-                //console.log("handleDragEvent[1-4] delta =" + delta );
                 if (isSelectable(row, col, myPlayerId, delta)) {
                     selectedPosition = { row: row, col: col };
                 }
                 if (!draggingStartedRowCol) {
-                    //console.log("handleDragEvent[1-5-1] draggingStartedRowCol=" + draggingStartedRowCol);
-                    //console.log("handleDragEvent[1-5-2] state.board[row][col]=" + state.board[row][col]);
                     // drag started
                     if (isSelectableAt(row, col)) {
                         draggingStartedRowCol = { row: row, col: col };
                         draggingPiece = document.getElementById("piece_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
                         draggingPiece.style.zIndex = ++nextZIndex + "";
-                        draggingPiece.className += " selected";
                         draggingStartPosi = document.getElementById("cell_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
-                        draggingStartPosi.className += " selected";
+                        addSelectedCSSClass();
                     }
                 }
             }
             if (!draggingPiece) {
                 return;
             }
-            //console.log("type = " + type);
             if (type === "touchend") {
-                //console.log("handleDragEvent[1-6]");
                 var from = draggingStartedRowCol;
                 var to = { row: row, col: col };
-                //console.log("handleDragEvent[1-6-2] from.row="  + from.row + " from.col=" + from.col + " to.row=" + to.row + " to.col=" + to.col);
                 dragDone(from, to);
             }
             else {
                 // Drag continue
-                //setDraggingPieceTopLeft(getSquareTopLeft(row, col));
-                //console.log("handleDragEvent[1-7]");
-                //if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)){
                 setDraggingPieceTopLeft(row, col, false);
             }
         }
@@ -616,8 +594,7 @@ var gameLogic;
             if (draggingStartedRowCol) {
                 setDraggingPieceTopLeft(draggingStartedRowCol.row, draggingStartedRowCol.col, true);
                 draggingStartedRowCol = null;
-                draggingPiece.className = draggingPiece.className.replace('selected', '');
-                draggingStartPosi.className = draggingStartPosi.className.replace('selected', '');
+                removeAllSelectedCSS();
                 draggingPiece = null;
             }
         }
@@ -627,17 +604,10 @@ var gameLogic;
         log.info(msg);
         msg = msg;
         // Update piece in board
-        //console.log("dragDone! from.row=" + from.row + " from.col=" + from.col + " to.row=" + to.row + " to.col=" + to.col);
-        //console.log("dragDone! draggingStartedRowCol.row=" + draggingStartedRowCol.row + " draggingStartedRowCol.col=" + draggingStartedRowCol.col);
         if (from.row === to.row && from.col === to.col) {
             return;
         }
-        //console.log("dragDone! gameLogic.getMovesHistory=" + gameLogic.getMovesHistory(from.row, from.col, to.row, to.col));
-        //console.log("dragDone! before draggingPiece.className=" + draggingPiece.className);
-        draggingPiece.className = draggingPiece.className.replace('selected', '');
-        draggingStartPosi.className = draggingStartPosi.className.replace('selected', '');
-        draggingPiece.className = draggingPiece.className.replace('canDrop', '');
-        draggingStartPosi.className = draggingStartPosi.className.replace('canDrop', '');
+        removeAllSelectedCSS();
         try {
             var myPlayerId = lastUpdateUI.turnIndexAfterMove;
             if (gameLogic.getMovesHistory(from.row, from.col, to.row, to.col)) {
@@ -656,6 +626,30 @@ var gameLogic;
         canMakeMove = false; // to prevent making another move
         gameService.makeMove(move);
     }
+    function addSelectedCSSClass() {
+        if (draggingPiece.className.indexOf("selected") < 0) {
+            draggingPiece.className += " selected";
+        }
+        //if (draggingStartPosi.className.indexOf("selected") < 0){ draggingStartPosi.className += "selected"; }
+    }
+    function addCanDropCSSClass() {
+        if (draggingPiece.className.indexOf("canDrop") < 0) {
+            draggingPiece.className += " canDrop";
+        }
+        //if (draggingStartPosi.className.indexOf("canDrop") < 0){ draggingStartPosi.className += "canDrop"; }
+    }
+    function removeSelectedCSSClass() {
+        draggingPiece.className = draggingPiece.className.replace('selected', '');
+        //draggingStartPosi.className = draggingStartPosi.className.replace('selected' , '');
+    }
+    function removeCanDropCSSClass() {
+        draggingPiece.className = draggingPiece.className.replace('canDrop', '');
+        //draggingStartPosi.className = draggingStartPosi.className.replace('canDrop' , '');
+    }
+    function removeAllSelectedCSS() {
+        removeSelectedCSSClass();
+        removeCanDropCSSClass();
+    }
     /*
       function getRotationPosition(row: number, col:number, clientX: number, clientY: number, playerId: number): IPosition {
         if(playerId === 0){ return {row: row, col:col}; }
@@ -670,17 +664,12 @@ var gameLogic;
       }*/
     function setDraggingPieceTopLeft(row, col, reset) {
         /* if this is a valid drop position, change the glowing color */
-        if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)) {
-            if (draggingPiece.className.indexOf("canDrop") < 0) {
-                draggingPiece.className += " canDrop";
-            }
-            if (draggingStartPosi.className.indexOf("canDrop") < 0) {
-                draggingStartPosi.className += "canDrop";
-            }
+        if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)
+            && draggingStartedRowCol.row != row && draggingStartedRowCol.col != col) {
+            addCanDropCSSClass();
         }
         else {
-            draggingPiece.className = draggingPiece.className.replace('canDrop', '');
-            draggingStartPosi.className = draggingStartPosi.className.replace('canDrop', '');
+            removeCanDropCSSClass();
         }
         if (reset || !isValidPosition(row, col)) {
             draggingPiece.style.left = getLeftShift(draggingStartedRowCol.col) + "%";
