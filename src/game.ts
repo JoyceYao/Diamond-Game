@@ -14,7 +14,7 @@ module game {
   let colsNum = 19;
   let draggingStartedRowCol: IPosition = null; // The {row: YY, col: XX} where dragging started.
   let draggingPiece : HTMLElement = null;
-  let draggingStartPosi : HTMLElement = null;
+  let draggingPieceObj : HTMLElement = null;
   let nextZIndex = 61;
   interface IPosition {
     row: number;
@@ -173,20 +173,20 @@ module game {
 
   export function getStyle(row: number, col: number): {} {
     if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "playAndPass") {
-      return {top: "0%", left: "0%", position: "relative", width: "90%", height: "100%",
+      return {top: "50%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", transform: "translateY(-50%)",
               "-webkit-animation": "moveAnimation 1s",
               "animation": "moveAnimation 1s"};
     } else {
-      return {width: "90%", height: "100%"};
+      return {top: "50%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", transform: "translateY(-50%)"};
     }
   }
 
   function getTopShift(row: number){
-    return row * 7.86;
+    return row * 7.72;
   }
 
   function getLeftShift(col: number){
-    return col * 4.59 + 5.5;
+    return col * 4.427 + 5.5;
   }
 
   function modifyMoveCSS(delta: BoardDelta){
@@ -199,10 +199,12 @@ module game {
     var cssRules = "";
     var interval = 100/steps;
     for (var i=0; i<steps; i++){
-      var top = (moveHistory[i].rowS-finalRow)*100;
+      var top = (moveHistory[i].rowS-finalRow)*100+50;  // vertical center: top:50%; transform: translateY(-50%);
       var left = (moveHistory[i].colS-finalCol)*100/2;
-      cssRules += interval*i + '% {top: ' + top + '%; left: ' + left + '%;}';
+      cssRules += interval*i + '% {top: ' + top + '%; transform: translateY(-50%); left: ' + left + '%;}';
     }
+
+    console.log("modifyMoveCSS  cssRules=" + cssRules);
 
     var style = document.createElement('style');
     style.type = 'text/css';
@@ -238,12 +240,14 @@ module game {
     } else {
       var myPlayerId: number = lastUpdateUI.turnIndexAfterMove;
       // Inside gameArea. Let's find the containing square's row and col
-      var row = Math.floor((y / gameArea.clientHeight)*100 / 7.86);
+      var row = Math.floor((y / gameArea.clientHeight)*100 / 7.72);
       var col = 0;
       if (row % 2 === 0){
-        col = Math.floor(((x / gameArea.clientWidth)*100 - 5.5) / 9.18 )*2+1;
+        // 9.927 = 5.5 + 4.427 even rows start from col = 1
+        col = Math.floor(((x / gameArea.clientWidth)*100 - 9.927) / 8.854 )*2+1;
       } else {
-        col = Math.floor(((x / gameArea.clientWidth)*100 - 5.5) / 9.18 )*2;
+        // odd rows start from col = 0
+        col = Math.floor(((x / gameArea.clientWidth)*100 - 5.5) / 8.854 )*2;
       }
 
       if (type === "touchstart") {
@@ -256,9 +260,9 @@ module game {
           // drag started
           if (isSelectableAt(row, col)){
             draggingStartedRowCol = {row: row, col: col};
-            draggingPiece = document.getElementById("piece_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
+            draggingPiece = document.getElementById("cell_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
             draggingPiece.style.zIndex = ++nextZIndex + "";
-            draggingStartPosi = document.getElementById("cell_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
+            //draggingPieceObj = document.getElementById("pieceC_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
             addSelectedCSSClass();
           }
         }
@@ -316,22 +320,22 @@ module game {
 
   function addSelectedCSSClass(): void {
     if (draggingPiece.className.indexOf("selected") < 0){ draggingPiece.className += " selected"; }
-    //if (draggingStartPosi.className.indexOf("selected") < 0){ draggingStartPosi.className += "selected"; }
+    //if (draggingPieceObj.className.indexOf("selected") < 0){ draggingPieceObj.className += "selected"; }
   }
 
   function addCanDropCSSClass(): void {
     if (draggingPiece.className.indexOf("canDrop") < 0){ draggingPiece.className += " canDrop"; }
-    //if (draggingStartPosi.className.indexOf("canDrop") < 0){ draggingStartPosi.className += "canDrop"; }
+    //if (draggingPieceObj.className.indexOf("canDrop") < 0){ draggingPieceObj.className += "canDrop"; }
   }
 
   function removeSelectedCSSClass(): void {
     draggingPiece.className = draggingPiece.className.replace('selected' , '');
-    //draggingStartPosi.className = draggingStartPosi.className.replace('selected' , '');
+    //draggingPieceObj.className = draggingPieceObj.className.replace('selected' , '');
   }
 
   function removeCanDropCSSClass(): void {
     draggingPiece.className = draggingPiece.className.replace('canDrop' , '');
-    //draggingStartPosi.className = draggingStartPosi.className.replace('canDrop' , '');
+    //draggingPieceObj.className = draggingPieceObj.className.replace('canDrop' , '');
   }
 
   function removeAllSelectedCSS(): void {
@@ -354,8 +358,11 @@ module game {
 
   function setDraggingPieceTopLeft(row: number, col: number, reset: boolean) {
     /* if this is a valid drop position, change the glowing color */
+    console.log("setDraggingPieceTopLeft !!");
+    //console.log(gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col));
+    //console.log(!(draggingStartedRowCol.row === row && draggingStartedRowCol.col === col));
     if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)
-      && draggingStartedRowCol.row != row && draggingStartedRowCol.col != col){
+      && !(draggingStartedRowCol.row === row && draggingStartedRowCol.col === col)){
       addCanDropCSSClass();
     } else {
       removeCanDropCSSClass();

@@ -341,7 +341,7 @@ var gameLogic;
     var colsNum = 19;
     var draggingStartedRowCol = null; // The {row: YY, col: XX} where dragging started.
     var draggingPiece = null;
-    var draggingStartPosi = null;
+    var draggingPieceObj = null;
     var nextZIndex = 61;
     function init() {
         resizeGameAreaService.setWidthToHeight(1);
@@ -480,20 +480,20 @@ var gameLogic;
     }
     function getStyle(row, col) {
         if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "playAndPass") {
-            return { top: "0%", left: "0%", position: "relative", width: "90%", height: "100%",
+            return { top: "50%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", transform: "translateY(-50%)",
                 "-webkit-animation": "moveAnimation 1s",
                 "animation": "moveAnimation 1s" };
         }
         else {
-            return { width: "90%", height: "100%" };
+            return { top: "50%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", transform: "translateY(-50%)" };
         }
     }
     game.getStyle = getStyle;
     function getTopShift(row) {
-        return row * 7.86;
+        return row * 7.72;
     }
     function getLeftShift(col) {
-        return col * 4.59 + 5.5;
+        return col * 4.427 + 5.5;
     }
     function modifyMoveCSS(delta) {
         var moveHistory = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
@@ -506,10 +506,11 @@ var gameLogic;
         var cssRules = "";
         var interval = 100 / steps;
         for (var i = 0; i < steps; i++) {
-            var top = (moveHistory[i].rowS - finalRow) * 100;
+            var top = (moveHistory[i].rowS - finalRow) * 100 + 50; // vertical center: top:50%; transform: translateY(-50%);
             var left = (moveHistory[i].colS - finalCol) * 100 / 2;
-            cssRules += interval * i + '% {top: ' + top + '%; left: ' + left + '%;}';
+            cssRules += interval * i + '% {top: ' + top + '%; transform: translateY(-50%); left: ' + left + '%;}';
         }
+        console.log("modifyMoveCSS  cssRules=" + cssRules);
         var style = document.createElement('style');
         style.type = 'text/css';
         style.innerHTML = ' @-webkit-keyframes moveAnimation { ' + cssRules + ' }';
@@ -551,13 +552,15 @@ var gameLogic;
         else {
             var myPlayerId = lastUpdateUI.turnIndexAfterMove;
             // Inside gameArea. Let's find the containing square's row and col
-            var row = Math.floor((y / gameArea.clientHeight) * 100 / 7.86);
+            var row = Math.floor((y / gameArea.clientHeight) * 100 / 7.72);
             var col = 0;
             if (row % 2 === 0) {
-                col = Math.floor(((x / gameArea.clientWidth) * 100 - 5.5) / 9.18) * 2 + 1;
+                // 9.927 = 5.5 + 4.427 even rows start from col = 1
+                col = Math.floor(((x / gameArea.clientWidth) * 100 - 9.927) / 8.854) * 2 + 1;
             }
             else {
-                col = Math.floor(((x / gameArea.clientWidth) * 100 - 5.5) / 9.18) * 2;
+                // odd rows start from col = 0
+                col = Math.floor(((x / gameArea.clientWidth) * 100 - 5.5) / 8.854) * 2;
             }
             if (type === "touchstart") {
                 var delta = { rowS: row, colS: col, rowE: row, colE: col, playerNo: playerNo };
@@ -568,9 +571,9 @@ var gameLogic;
                     // drag started
                     if (isSelectableAt(row, col)) {
                         draggingStartedRowCol = { row: row, col: col };
-                        draggingPiece = document.getElementById("piece_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
+                        draggingPiece = document.getElementById("cell_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
                         draggingPiece.style.zIndex = ++nextZIndex + "";
-                        draggingStartPosi = document.getElementById("cell_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
+                        //draggingPieceObj = document.getElementById("pieceC_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
                         addSelectedCSSClass();
                     }
                 }
@@ -630,21 +633,21 @@ var gameLogic;
         if (draggingPiece.className.indexOf("selected") < 0) {
             draggingPiece.className += " selected";
         }
-        //if (draggingStartPosi.className.indexOf("selected") < 0){ draggingStartPosi.className += "selected"; }
+        //if (draggingPieceObj.className.indexOf("selected") < 0){ draggingPieceObj.className += "selected"; }
     }
     function addCanDropCSSClass() {
         if (draggingPiece.className.indexOf("canDrop") < 0) {
             draggingPiece.className += " canDrop";
         }
-        //if (draggingStartPosi.className.indexOf("canDrop") < 0){ draggingStartPosi.className += "canDrop"; }
+        //if (draggingPieceObj.className.indexOf("canDrop") < 0){ draggingPieceObj.className += "canDrop"; }
     }
     function removeSelectedCSSClass() {
         draggingPiece.className = draggingPiece.className.replace('selected', '');
-        //draggingStartPosi.className = draggingStartPosi.className.replace('selected' , '');
+        //draggingPieceObj.className = draggingPieceObj.className.replace('selected' , '');
     }
     function removeCanDropCSSClass() {
         draggingPiece.className = draggingPiece.className.replace('canDrop', '');
-        //draggingStartPosi.className = draggingStartPosi.className.replace('canDrop' , '');
+        //draggingPieceObj.className = draggingPieceObj.className.replace('canDrop' , '');
     }
     function removeAllSelectedCSS() {
         removeSelectedCSSClass();
@@ -664,8 +667,11 @@ var gameLogic;
       }*/
     function setDraggingPieceTopLeft(row, col, reset) {
         /* if this is a valid drop position, change the glowing color */
+        console.log("setDraggingPieceTopLeft !!");
+        //console.log(gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col));
+        //console.log(!(draggingStartedRowCol.row === row && draggingStartedRowCol.col === col));
         if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)
-            && draggingStartedRowCol.row != row && draggingStartedRowCol.col != col) {
+            && !(draggingStartedRowCol.row === row && draggingStartedRowCol.col === col)) {
             addCanDropCSSClass();
         }
         else {
@@ -730,7 +736,15 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
         var bestDelta = null;
         var deltaList = [];
         var myPieces = getMyPiecePosition(board, playerIndex);
-        var stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
+        var stateList = [];
+        if (nearEndGame(myPieces, playerIndex)) {
+            // if close to end game, look for more steps
+            return getEndGameMove(board, myPieces, playerIndex, playerNo);
+        }
+        else {
+            stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
+        }
+        console.log("stateList=" + JSON.stringify(stateList));
         var maxStartPoint = 0;
         /* for each move result, calculate the distance reduced by the movement,
           choose the move that reduce the most distance */
@@ -748,11 +762,15 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
                 thisDist += dist;
             }
             /* prefer long distance movement and higher starting row (pieces that fall behind) */
+            console.log("thisDist[0]=" + thisDist);
+            console.log("maxDist[0]=" + maxDist);
             if (bestDelta === null || thisDist > maxDist ||
                 (thisDist === maxDist && thisStartPoint > maxStartPoint)) {
                 maxDist = thisDist;
                 bestDelta = thisDeltaList[0];
                 maxStartPoint = thisStartPoint;
+                console.log("maxDist[1]=" + maxDist);
+                console.log("thisDist[1]=" + thisDist);
             }
         }
         // if don't find a good move within one steps (very close to target board)
@@ -786,16 +804,76 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
                 var nextMyPieces = angular.copy(myPieces);
                 nextMyPieces.splice(i, 1);
                 nextMyPieces.push([nextDelta.rowE, nextDelta.colE]);
-                deltaList.push(nextDelta);
-                var thisResult = getBoardListAfterNSteps(nextBoard, deltaList, nextMyPieces, steps - 1, playerNo, playerIndex);
+                var nextDeltaList = angular.copy(deltaList);
+                nextDeltaList.push(nextDelta);
+                var thisResult = getBoardListAfterNSteps(nextBoard, nextDeltaList, nextMyPieces, steps - 1, playerNo, playerIndex);
                 if (thisResult) {
                     result.push.apply(result, thisResult);
                 }
-                // remove last element for next recursion
-                deltaList.splice(-1, 1);
             }
         }
         return result;
+    }
+    function nearEndGame(myPieces, playerIndex) {
+        var rowSum = 0;
+        for (var i = 0; i < myPieces.length; i++) {
+            rowSum += getPositionNo(myPieces[i][0], myPieces[i][1], playerIndex);
+        }
+        if (rowSum < 25) {
+            return true;
+        }
+        return false;
+    }
+    function getEndGameMove(board, myPieces, playerIndex, playerNo) {
+        var piece = getNotArrivedPiece(myPieces, playerIndex);
+        var target = getEmptyTargetPosition(board, playerIndex);
+        var possibleMoves = gameLogic.getPossibleMoves(board, playerIndex, { rowS: piece[0], colS: piece[1], rowE: piece[0], colE: piece[1], playerNo: playerNo });
+        console.log("getEndGameMove piece=" + JSON.stringify(piece));
+        console.log("getEndGameMove target=" + JSON.stringify(target));
+        var bestMove = null;
+        var minDist = 30;
+        for (var j = 0; j < possibleMoves.length; j++) {
+            var thisMove = possibleMoves[j];
+            var delta = thisMove[2].set.value;
+            var thisDist = Math.abs(parseInt(delta.rowE) - target[0]) +
+                Math.abs(parseInt(delta.colE) - target[1]);
+            console.log("getEndGameMove target[0]=" + target[0]);
+            console.log("getEndGameMove target[1]=" + target[1]);
+            console.log("getEndGameMove target[0]=" + target[0]);
+            console.log("getEndGameMove target[1]=" + target[1]);
+            console.log("getEndGameMove Math.abs(parseInt(delta.rowE)-target[0])=" + Math.abs(parseInt(delta.rowE) - target[0]));
+            console.log("getEndGameMove Math.abs(parseInt(delta.colE)-target[1])=" + Math.abs(parseInt(delta.colE) - target[1]));
+            console.log("getEndGameMove thisDist=" + thisDist);
+            console.log("getEndGameMove minDist=" + minDist);
+            if (thisDist < minDist) {
+                bestMove = thisMove;
+                minDist = thisDist;
+            }
+        }
+        return bestMove;
+    }
+    function getNotArrivedPiece(myPieces, playerIndex) {
+        var result = [];
+        var maxPosi = 0;
+        for (var i = 0; i < myPieces.length; i++) {
+            var posit = getPositionNo(myPieces[i][0], myPieces[i][1], playerIndex);
+            if (posit > 3 && posit > maxPosi) {
+                result = myPieces[i];
+                maxPosi = posit;
+            }
+        }
+        return result;
+    }
+    function getEmptyTargetPosition(board, playerIndex) {
+        var result = [];
+        for (var i = 0; i < board.length; i++) {
+            for (var j = 0; j < board[0].length; j++) {
+                if (getPositionNo(i, j, playerIndex) <= 3 && board[i][j] === "") {
+                    result = [i, j];
+                    return result;
+                }
+            }
+        }
     }
     /* return the location of all pieces of this player */
     function getMyPiecePosition(board, playerIndex) {
@@ -814,11 +892,17 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
     function getRowDiff(rowS, colS, rowE, colE, playerIndex) {
         var startRow = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
         var endRow = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
+        console.log("getRowDiff:rowS=" + rowS + " colS=" + colS + " rowE=" + rowE + " colE=" + colE + " playerIndex=" + playerIndex);
         return startRow - endRow;
     }
     /* input playerIdx and a position on the board, output the rowNo for the player at this position */
     function getPositionNo(row, col, playerIndex) {
-        return parseInt(rowNoByPlayer[playerIndex][row][col]);
+        try {
+            return parseInt(rowNoByPlayer[playerIndex][row][col]);
+        }
+        catch (e) {
+            return 13;
+        }
     }
     /* representing the prefer move direction for each player, 9-12 -> start area, 0-3 -> target area */
     var rowNoByPlayer = [[['#', '#', '#', '#', '#', '#', '#', '#', '#', '0', '#', '#', '#', '#', '#', '#', '#', '#', '#'],

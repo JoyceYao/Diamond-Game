@@ -3,14 +3,14 @@
   height: 10%;
   border-radius: 50%;
   behavior: url(PIE.htc); /* remove if you don't care about IE8 */
-  background-color: rgba(0, 0, 255, 0.8);
-  box-shadow: 0 0 1.2rem 0.7rem blue;
+  background-color: rgba(0, 0, 255, 0.9);
+  box-shadow: 0 0 1rem 0.9rem blue;
   border-color: blue;
 }
 
 .canDrop {
-  background-color: rgba(204, 0, 204, 0.8) !important;
-  box-shadow: 0 0 1.2rem 0.7rem #cc0099 !important;
+  background-color: rgba(204, 0, 204, 0.9) !important;
+  box-shadow: 0 0 1rem 0.9rem #cc0099 !important;
   border-color: #cc0099 !important;
 }
 
@@ -22,7 +22,8 @@ td {
   background-image: url('./imgs/Diamond_Game_mini.svg');
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: contain;
+  /*background-size: contain;*/
+  background-size: 100% 96%;
 }
 
 .left-slide-column {
