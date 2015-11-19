@@ -45,7 +45,7 @@ module aiService {
       stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
     }
 
-    console.log("stateList=" + JSON.stringify(stateList));
+    //console.log("stateList=" + JSON.stringify(stateList));
     var maxStartPoint = 0;
 
     /* for each move result, calculate the distance reduced by the movement,
@@ -62,15 +62,15 @@ module aiService {
         thisDist += dist;
       }
       /* prefer long distance movement and higher starting row (pieces that fall behind) */
-      console.log("thisDist[0]=" + thisDist);
-      console.log("maxDist[0]=" + maxDist);
+      //console.log("thisDist[0]=" + thisDist);
+      //console.log("maxDist[0]=" + maxDist);
       if (bestDelta === null || thisDist > maxDist ||
          (thisDist === maxDist && thisStartPoint > maxStartPoint)){
         maxDist = thisDist;
         bestDelta = thisDeltaList[0];
         maxStartPoint = thisStartPoint;
-        console.log("maxDist[1]=" + maxDist);
-        console.log("thisDist[1]=" + thisDist);
+        //console.log("maxDist[1]=" + maxDist);
+        //console.log("thisDist[1]=" + thisDist);
       }
     }
 
@@ -132,8 +132,8 @@ module aiService {
     var target: number[] = getEmptyTargetPosition(board, playerIndex);
     var possibleMoves = gameLogic.getPossibleMoves(board, playerIndex,
       {rowS:piece[0], colS:piece[1], rowE:piece[0], colE:piece[1], playerNo: playerNo});
-    console.log("getEndGameMove piece=" + JSON.stringify(piece));
-    console.log("getEndGameMove target=" + JSON.stringify(target));
+    //console.log("getEndGameMove piece=" + JSON.stringify(piece));
+    //console.log("getEndGameMove target=" + JSON.stringify(target));
 
     var bestMove: IMove = null;
     var minDist = 30;
@@ -143,16 +143,16 @@ module aiService {
       var thisDist = Math.abs(parseInt(delta.rowE)-target[0])+
         Math.abs(parseInt(delta.colE)-target[1]);
 
-      console.log("getEndGameMove target[0]=" + target[0]);
-      console.log("getEndGameMove target[1]=" + target[1]);
+      //console.log("getEndGameMove target[0]=" + target[0]);
+      //console.log("getEndGameMove target[1]=" + target[1]);
 
-      console.log("getEndGameMove target[0]=" + target[0]);
-      console.log("getEndGameMove target[1]=" + target[1]);
+      //console.log("getEndGameMove target[0]=" + target[0]);
+      //console.log("getEndGameMove target[1]=" + target[1]);
 
-      console.log("getEndGameMove Math.abs(parseInt(delta.rowE)-target[0])=" + Math.abs(parseInt(delta.rowE)-target[0]));
-      console.log("getEndGameMove Math.abs(parseInt(delta.colE)-target[1])=" + Math.abs(parseInt(delta.colE)-target[1]));
-      console.log("getEndGameMove thisDist=" + thisDist);
-      console.log("getEndGameMove minDist=" + minDist);
+      //console.log("getEndGameMove Math.abs(parseInt(delta.rowE)-target[0])=" + Math.abs(parseInt(delta.rowE)-target[0]));
+      //console.log("getEndGameMove Math.abs(parseInt(delta.colE)-target[1])=" + Math.abs(parseInt(delta.colE)-target[1]));
+      //console.log("getEndGameMove thisDist=" + thisDist);
+      //console.log("getEndGameMove minDist=" + minDist);
       if (thisDist < minDist){
         bestMove = thisMove;
         minDist = thisDist;
@@ -204,7 +204,7 @@ module aiService {
   function getRowDiff(rowS: number, colS: number, rowE: number, colE: number, playerIndex: number): number {
     var startRow : number = parseInt(rowNoByPlayer[playerIndex][rowS][colS]);
     var endRow : number = parseInt(rowNoByPlayer[playerIndex][rowE][colE]);
-    console.log("getRowDiff:rowS=" + rowS + " colS=" + colS + " rowE=" + rowE+ " colE=" + colE + " playerIndex=" + playerIndex);
+    //console.log("getRowDiff:rowS=" + rowS + " colS=" + colS + " rowE=" + rowE+ " colE=" + colE + " playerIndex=" + playerIndex);
     return startRow-endRow;
   }
 
