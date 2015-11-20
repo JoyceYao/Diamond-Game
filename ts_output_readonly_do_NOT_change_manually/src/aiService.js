@@ -58,7 +58,10 @@ var aiService;
             }
         }
         if (maxDist == 0 && nearEndGame(myPieces, playerIndex)) {
-            return getEndGameMove(board, myPieces, playerIndex, playerNo);
+            var endGameMove = getEndGameMove(board, myPieces, playerIndex, playerNo);
+            if (endGameMove) {
+                return endGameMove;
+            }
         }
         var myMove = gameLogic.createMove(board, playerIndex, bestDelta);
         console.log("myMove=" + JSON.stringify(myMove));
@@ -113,9 +116,11 @@ var aiService;
     function getEndGameMove(board, myPieces, playerIndex, playerNo) {
         var piece = getNotArrivedPiece(myPieces, playerIndex);
         var target = getEmptyTargetPosition(board, playerIndex);
+        // if no empty target space (have other player's piece) return
+        if (!target) {
+            return null;
+        }
         var possibleMoves = gameLogic.getPossibleMoves(board, playerIndex, { rowS: piece[0], colS: piece[1], rowE: piece[0], colE: piece[1], playerNo: playerNo });
-        //console.log("getEndGameMove piece=" + JSON.stringify(piece));
-        //console.log("getEndGameMove target=" + JSON.stringify(target));
         var bestMove = null;
         var minDist = 30;
         for (var j = 0; j < possibleMoves.length; j++) {
@@ -123,14 +128,6 @@ var aiService;
             var delta = thisMove[2].set.value;
             var thisDist = Math.abs(parseInt(delta.rowE) - target[0]) +
                 Math.abs(parseInt(delta.colE) - target[1]);
-            //console.log("getEndGameMove target[0]=" + target[0]);
-            //console.log("getEndGameMove target[1]=" + target[1]);
-            //console.log("getEndGameMove target[0]=" + target[0]);
-            //console.log("getEndGameMove target[1]=" + target[1]);
-            //console.log("getEndGameMove Math.abs(parseInt(delta.rowE)-target[0])=" + Math.abs(parseInt(delta.rowE)-target[0]));
-            //console.log("getEndGameMove Math.abs(parseInt(delta.colE)-target[1])=" + Math.abs(parseInt(delta.colE)-target[1]));
-            //console.log("getEndGameMove thisDist=" + thisDist);
-            //console.log("getEndGameMove minDist=" + minDist);
             if (thisDist < minDist) {
                 bestMove = thisMove;
                 minDist = thisDist;
