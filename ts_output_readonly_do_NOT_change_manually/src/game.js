@@ -154,7 +154,8 @@ var game;
     }
     function getStyle(row, col) {
         console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
-        if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "playAndPass") {
+        console.log("getStyle !! =" + lastUpdateUI.playMode != "passAndPlay");
+        if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "passAndPlay") {
             console.log("getStyle animation!!");
             return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto",
                 "-webkit-animation": "moveAnimation 1s",
