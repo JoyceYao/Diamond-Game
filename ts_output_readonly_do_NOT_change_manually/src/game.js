@@ -77,11 +77,12 @@ var game;
             // because if we call aiService now
             // then the animation will be paused until the javascript finishes.
             //console.log("updateUI[3-1] state.delta=", state.delta);
-            //if (!state.delta) {
-            // This is the first move in the match, so
-            // there is not going to be an animation, so
-            // call sendComputerMove() now (can happen in ?onlyAIs mode)
-            sendComputerMove();
+            if (!state.delta) {
+                // This is the first move in the match, so
+                // there is not going to be an animation, so
+                // call sendComputerMove() now (can happen in ?onlyAIs mode)
+                sendComputerMove();
+            }
         }
     }
     game.updateUI = updateUI;
@@ -153,10 +154,10 @@ var game;
         }
     }
     function getStyle(row, col) {
-        console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
-        console.log("getStyle !! =" + lastUpdateUI.playMode != "passAndPlay");
+        //console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
+        //console.log("getStyle !! =" + lastUpdateUI.playMode != "passAndPlay");
         if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "passAndPlay") {
-            console.log("getStyle animation!!");
+            //console.log("getStyle animation!!");
             return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto",
                 "-webkit-animation": "moveAnimation 1s",
                 "animation": "moveAnimation 1s" };
