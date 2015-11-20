@@ -155,12 +155,13 @@ var game;
     function getStyle(row, col) {
         console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
         if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "playAndPass") {
-            return { top: "50%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", transform: "translateY(-50%)",
+            console.log("getStyle animation!!");
+            return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto",
                 "-webkit-animation": "moveAnimation 1s",
                 "animation": "moveAnimation 1s" };
         }
         else {
-            return { top: "50%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", transform: "translateY(-50%)" };
+            return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto" };
         }
     }
     game.getStyle = getStyle;
@@ -181,9 +182,10 @@ var game;
         var cssRules = "";
         var interval = 100 / steps;
         for (var i = 0; i < steps; i++) {
-            var top = (moveHistory[i].rowS - finalRow) * 100 + 50; // vertical center: top:50%; transform: translateY(-50%);
+            var top = (moveHistory[i].rowS - finalRow) * 100 + 10; // top:10%;
             var left = (moveHistory[i].colS - finalCol) * 100 / 2;
-            cssRules += interval * i + '% {top: ' + top + '%; transform: translateY(-50%); left: ' + left + '%;}';
+            //cssRules += interval*i + '% {top: ' + top + '%; transform: translateY(-50%); left: ' + left + '%;}';
+            cssRules += interval * i + '% {top: ' + top + '%; left: ' + left + '%;}';
         }
         console.log("modifyMoveCSS  cssRules=" + cssRules);
         var style = document.createElement('style');

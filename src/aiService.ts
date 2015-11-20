@@ -39,8 +39,8 @@ module aiService {
     var myPieces = getMyPiecePosition(board, playerIndex);
     var stateList : IDeltaHistory[] = [];
     if (nearEndGame(myPieces, playerIndex)){
-      // if close to end game, look for more steps
-      return getEndGameMove(board, myPieces, playerIndex, playerNo);
+       //if close to end game, look for more steps
+       return getEndGameMove(board, myPieces, playerIndex, playerNo);
     } else {
       stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
     }
@@ -237,7 +237,7 @@ module aiService {
      ['#', '#', '#', '#', '#', '#', '#', '#', '10', '', '11', '#', '#', '#', '#', '#', '#', '#', '#'],
      ['#', '#', '#', '#', '#', '#', '#', '8', '', '9', '', '10', '#', '#', '#', '#', '#', '#', '#'],
      ['9', '', '8', '', '7', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '', '12'],
-     ['#', '7', '', '6', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '#'],
+     ['#', '7', '', '6', '', '6', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '#'],
      ['#', '#', '5', '', '5', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '#', '#'],
      ['#', '#', '#', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '#', '#', '#'],
      ['#', '#', '2', '', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '10', '#', '#'],
