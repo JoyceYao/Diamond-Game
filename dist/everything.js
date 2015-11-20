@@ -251,6 +251,10 @@ var gameLogic;
             // Initially (at the beginning of the match), the board in state is undefined.
             throw new Error("Board doesn't initial normally");
         }
+        if (!playersMap[turnIndexBeforeMove]) {
+            // Initially (at the beginning of the match), the board in state is undefined.
+            initialPLayersMap();
+        }
         var rowS = delta.rowS;
         var colS = delta.colS;
         var rowE = delta.rowE;
@@ -306,12 +310,17 @@ var gameLogic;
         // to verify that move is legal.
         try {
             var deltaValue = move[2].set.value;
+            console.log("isMoveOk deltaValue=" + deltaValue);
+            if (deltaValue) {
+                console.log("isMoveOk deltaValue[2]=" + JSON.stringify(deltaValue));
+            }
             var board = stateBeforeMove.board;
             if (!board) {
                 board = getInitialBoard(deltaValue.playerNo);
             }
             var playerNo = deltaValue.playerNo;
             var expectedMove = createMove(board, turnIndexBeforeMove, deltaValue);
+            console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
             if (!angular.equals(move, expectedMove)) {
                 return false;
             }
@@ -481,12 +490,13 @@ var gameLogic;
     function getStyle(row, col) {
         console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
         if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "playAndPass") {
-            return { top: "50%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", transform: "translateY(-50%)",
+            console.log("getStyle animation!!");
+            return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto",
                 "-webkit-animation": "moveAnimation 1s",
                 "animation": "moveAnimation 1s" };
         }
         else {
-            return { top: "50%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", transform: "translateY(-50%)" };
+            return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto" };
         }
     }
     game.getStyle = getStyle;
@@ -507,9 +517,10 @@ var gameLogic;
         var cssRules = "";
         var interval = 100 / steps;
         for (var i = 0; i < steps; i++) {
-            var top = (moveHistory[i].rowS - finalRow) * 100 + 50; // vertical center: top:50%; transform: translateY(-50%);
+            var top = (moveHistory[i].rowS - finalRow) * 100 + 10; // top:10%;
             var left = (moveHistory[i].colS - finalCol) * 100 / 2;
-            cssRules += interval * i + '% {top: ' + top + '%; transform: translateY(-50%); left: ' + left + '%;}';
+            //cssRules += interval*i + '% {top: ' + top + '%; transform: translateY(-50%); left: ' + left + '%;}';
+            cssRules += interval * i + '% {top: ' + top + '%; left: ' + left + '%;}';
         }
         console.log("modifyMoveCSS  cssRules=" + cssRules);
         var style = document.createElement('style');
@@ -738,13 +749,7 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
         var deltaList = [];
         var myPieces = getMyPiecePosition(board, playerIndex);
         var stateList = [];
-        if (nearEndGame(myPieces, playerIndex)) {
-            // if close to end game, look for more steps
-            return getEndGameMove(board, myPieces, playerIndex, playerNo);
-        }
-        else {
-            stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
-        }
+        stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
         //console.log("stateList=" + JSON.stringify(stateList));
         var maxStartPoint = 0;
         /* for each move result, calculate the distance reduced by the movement,
@@ -772,9 +777,11 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
                 maxStartPoint = thisStartPoint;
             }
         }
-        // if don't find a good move within one steps (very close to target board)
-        // search for two steps ahead
+        if (maxDist == 0 && nearEndGame(myPieces, playerIndex)) {
+            return getEndGameMove(board, myPieces, playerIndex, playerNo);
+        }
         var myMove = gameLogic.createMove(board, playerIndex, bestDelta);
+        console.log("myMove=" + JSON.stringify(myMove));
         return myMove;
     }
     /* return the final board state and movement history (delta list) by N steps */
@@ -849,6 +856,7 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
                 minDist = thisDist;
             }
         }
+        console.log("getEndGameMove bestMove=" + JSON.stringify(getEndGameMove));
         return bestMove;
     }
     function getNotArrivedPiece(myPieces, playerIndex) {
@@ -921,7 +929,7 @@ angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
             ['#', '#', '#', '#', '#', '#', '#', '#', '10', '', '11', '#', '#', '#', '#', '#', '#', '#', '#'],
             ['#', '#', '#', '#', '#', '#', '#', '8', '', '9', '', '10', '#', '#', '#', '#', '#', '#', '#'],
             ['9', '', '8', '', '7', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '', '12'],
-            ['#', '7', '', '6', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '#'],
+            ['#', '7', '', '6', '', '6', '', '6', '', '7', '', '8', '', '9', '', '10', '', '11', '#'],
             ['#', '#', '5', '', '5', '', '5', '', '6', '', '7', '', '8', '', '9', '', '10', '#', '#'],
             ['#', '#', '#', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '9', '#', '#', '#'],
             ['#', '#', '2', '', '3', '', '4', '', '5', '', '6', '', '7', '', '8', '', '10', '#', '#'],
