@@ -251,6 +251,10 @@ var gameLogic;
             // Initially (at the beginning of the match), the board in state is undefined.
             throw new Error("Board doesn't initial normally");
         }
+        if (!playersMap[turnIndexBeforeMove]) {
+            // Initially (at the beginning of the match), the board in state is undefined.
+            initialPLayersMap();
+        }
         var rowS = delta.rowS;
         var colS = delta.colS;
         var rowE = delta.rowE;
@@ -306,12 +310,17 @@ var gameLogic;
         // to verify that move is legal.
         try {
             var deltaValue = move[2].set.value;
+            console.log("isMoveOk deltaValue=" + deltaValue);
+            if (deltaValue) {
+                console.log("isMoveOk deltaValue[2]=" + JSON.stringify(deltaValue));
+            }
             var board = stateBeforeMove.board;
             if (!board) {
                 board = getInitialBoard(deltaValue.playerNo);
             }
             var playerNo = deltaValue.playerNo;
             var expectedMove = createMove(board, turnIndexBeforeMove, deltaValue);
+            console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
             if (!angular.equals(move, expectedMove)) {
                 return false;
             }

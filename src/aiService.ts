@@ -38,12 +38,7 @@ module aiService {
     var deltaList : BoardDelta[] = [];
     var myPieces = getMyPiecePosition(board, playerIndex);
     var stateList : IDeltaHistory[] = [];
-    if (nearEndGame(myPieces, playerIndex)){
-       //if close to end game, look for more steps
-       return getEndGameMove(board, myPieces, playerIndex, playerNo);
-    } else {
-      stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
-    }
+    stateList = getBoardListAfterNSteps(board, deltaList, myPieces, steps, playerNo, playerIndex);
 
     //console.log("stateList=" + JSON.stringify(stateList));
     var maxStartPoint = 0;
@@ -74,10 +69,12 @@ module aiService {
       }
     }
 
-    // if don't find a good move within one steps (very close to target board)
-    // search for two steps ahead
+    if (maxDist == 0 && nearEndGame(myPieces, playerIndex)){
+      return getEndGameMove(board, myPieces, playerIndex, playerNo);
+    }
 
     var myMove = gameLogic.createMove(board, playerIndex, bestDelta);
+    console.log("myMove=" + JSON.stringify(myMove));
     return myMove;
   }
 
@@ -158,6 +155,7 @@ module aiService {
         minDist = thisDist;
       }
     }
+    console.log("getEndGameMove bestMove=" + JSON.stringify(getEndGameMove));
     return bestMove;
   }
 
