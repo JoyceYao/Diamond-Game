@@ -19,10 +19,9 @@ td {
 }
 
 #gameArea {
-  background-image: url('./imgs/Diamond_Game_mini.svg');
+  background-image: url('.././imgs/Diamond_Game.svg');
   background-repeat: no-repeat;
   background-position: center center;
-  /*background-size: contain;*/
   background-size: 100% 96%;
 }
 
