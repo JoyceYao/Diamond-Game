@@ -142,8 +142,8 @@ var gameLogic;
             var nextCol = delta.colS + adjPosition[i][1];
             var nextDalta = { rowS: delta.rowS, colS: delta.colS, rowE: nextRow, colE: nextCol, playerNo: delta.playerNo };
             try {
-                possibleMoves.push(createMove(board, turnIndexBeforeMove, nextDalta));
                 addMoveHistory([nextDalta]);
+                possibleMoves.push(createMove(board, turnIndexBeforeMove, nextDalta));
                 markAsVisited(possibleMoveBoard, nextRow, nextCol);
             }
             catch (e) {
@@ -324,6 +324,7 @@ var gameLogic;
             console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
             if (!angular.equals(move, expectedMove)) {
                 console.log("isMoveOk inValidMove!! Move is not the same with expected! move=" + JSON.stringify(move) + " expectedMove=" + JSON.stringify(expectedMove));
+                console.log("isMoveOK movesHistoryMap=" + JSON.stringify(movesHistoryMap));
                 return false;
             }
         }
