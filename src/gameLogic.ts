@@ -350,6 +350,7 @@ module gameLogic {
 
       var playerNo = deltaValue.playerNo;
       var expectedMove = createMove(board, turnIndexBeforeMove, deltaValue);
+       expectedMove[2].set.value = move[2].set.value;
       console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
 
       if (!angular.equals(move, expectedMove)) {
