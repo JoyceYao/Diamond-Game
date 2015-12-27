@@ -353,10 +353,12 @@ module gameLogic {
       console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
 
       if (!angular.equals(move, expectedMove)) {
+        console.log("isMoveOk inValidMove!! Move is not the same with expected! move=" + JSON.stringify(move) + " expectedMove=" + JSON.stringify(expectedMove));
         return false;
       }
     } catch (e) {
       // if there are any exceptions then the move is illegal
+      console.log("isMoveOk inValidMove!! error" + e);
       return false;
     }
     return true;
