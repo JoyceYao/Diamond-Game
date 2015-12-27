@@ -174,8 +174,10 @@ var game;
         return col * 4.427 + 5.5;
     }
     function modifyMoveCSS(delta) {
-        //var moveHistory: BoardDelta[] = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
-        var moveHistory = state.movesHistory;
+        var moveHistory = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
+        if (!moveHistory) {
+            moveHistory = [state.delta];
+        }
         if (!moveHistory) {
             return;
         }

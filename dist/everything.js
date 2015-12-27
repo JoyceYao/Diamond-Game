@@ -296,7 +296,7 @@ var gameLogic;
         return [firstOperation,
             { set: { key: 'board', value: boardAfterMove } },
             { set: { key: 'delta', value: delta } },
-            { set: { key: 'movesHistory', value: getMovesHistory(rowS, colS, rowE, colE) } }];
+        ];
     }
     gameLogic.createMove = createMove;
     //test commit
@@ -323,11 +323,13 @@ var gameLogic;
             var expectedMove = createMove(board, turnIndexBeforeMove, deltaValue);
             console.log("isMoveOk move=" + JSON.stringify(move));
             console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
-            if (move.length > 3) {
-                expectedMove[3].set.value = move[3].set.value;
-                console.log("isMoveOk move[3].set.value=" + JSON.stringify(move[3].set.value));
-                console.log("isMoveOk expectedMove[3].set.value=" + JSON.stringify(expectedMove[3].set.value));
-            }
+            //if(move.length > 3){
+            //  expectedMove[3].set.value = move[3].set.value;
+            //  console.log("isMoveOk move[3].set.value=" + JSON.stringify(move[3].set.value));
+            //  console.log("isMoveOk expectedMove[3].set.value=" + JSON.stringify(expectedMove[3].set.value));
+            //}else if (expectedMove.length == 3){
+            //  expectedMove
+            //}
             console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
             if (!angular.equals(move, expectedMove)) {
                 console.log("isMoveOk inValidMove!! Move is not the same with expected! move=" + JSON.stringify(move) + " expectedMove=" + JSON.stringify(expectedMove));
@@ -520,8 +522,10 @@ var gameLogic;
         return col * 4.427 + 5.5;
     }
     function modifyMoveCSS(delta) {
-        //var moveHistory: BoardDelta[] = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
-        var moveHistory = state.movesHistory;
+        var moveHistory = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
+        if (!moveHistory) {
+            moveHistory = [state.delta];
+        }
         if (!moveHistory) {
             return;
         }

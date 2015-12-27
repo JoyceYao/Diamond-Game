@@ -193,8 +193,10 @@ module game {
   }
 
   function modifyMoveCSS(delta: BoardDelta){
-    //var moveHistory: BoardDelta[] = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
-    var moveHistory: BoardDelta[] = state.movesHistory;
+    var moveHistory: BoardDelta[] = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
+    if (!moveHistory){
+      moveHistory = [state.delta];
+    }
     if (!moveHistory){ return; }
 
     console.log("modifyMoveCSS  moveHistory=" + JSON.stringify(moveHistory));
