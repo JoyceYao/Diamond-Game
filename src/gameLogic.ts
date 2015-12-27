@@ -353,10 +353,11 @@ module gameLogic {
 
       console.log("isMoveOk move=" + JSON.stringify(move));
       console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
-
-      expectedMove[3].set.value = move[3].set.value;
-      console.log("isMoveOk move[3].set.value=" + JSON.stringify(move[3].set.value));
-      console.log("isMoveOk expectedMove[3].set.value=" + JSON.stringify(expectedMove[3].set.value));
+      if(move[3]){
+          expectedMove[3].set.value = move[3].set.value;
+          console.log("isMoveOk move[3].set.value=" + JSON.stringify(move[3].set.value));
+          console.log("isMoveOk expectedMove[3].set.value=" + JSON.stringify(expectedMove[3].set.value));
+      }
       console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
 
       if (!angular.equals(move, expectedMove)) {

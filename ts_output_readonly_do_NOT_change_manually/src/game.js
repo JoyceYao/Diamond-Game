@@ -308,6 +308,7 @@ var game;
         draggingStartedRowCol = null;
         draggingPiece = null;
         canMakeMove = false; // to prevent making another move
+        console.log("game.ts commitTheMove move= " + JSON.stringify(move));
         gameService.makeMove(move);
     }
     function addSelectedCSSClass() {
