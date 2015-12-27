@@ -323,7 +323,7 @@ var gameLogic;
             var expectedMove = createMove(board, turnIndexBeforeMove, deltaValue);
             console.log("isMoveOk move=" + JSON.stringify(move));
             console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
-            if (move[3]) {
+            if (move.length > 3) {
                 expectedMove[3].set.value = move[3].set.value;
                 console.log("isMoveOk move[3].set.value=" + JSON.stringify(move[3].set.value));
                 console.log("isMoveOk expectedMove[3].set.value=" + JSON.stringify(expectedMove[3].set.value));
