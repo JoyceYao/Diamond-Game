@@ -321,9 +321,9 @@ var gameLogic;
             }
             var playerNo = deltaValue.playerNo;
             var expectedMove = createMove(board, turnIndexBeforeMove, deltaValue);
-            expectedMove[2].set.value = move[2].set.value;
-            console.log("isMoveOk move[2].set.value=" + JSON.stringify(move[2].set.value));
-            console.log("isMoveOk expectedMove[2].set.value=" + JSON.stringify(expectedMove[2].set.value));
+            expectedMove[3].set.value = move[3].set.value;
+            console.log("isMoveOk move[3].set.value=" + JSON.stringify(move[3].set.value));
+            console.log("isMoveOk expectedMove[3].set.value=" + JSON.stringify(expectedMove[3].set.value));
             console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
             if (!angular.equals(move, expectedMove)) {
                 console.log("isMoveOk inValidMove!! Move is not the same with expected! move=" + JSON.stringify(move) + " expectedMove=" + JSON.stringify(expectedMove));
