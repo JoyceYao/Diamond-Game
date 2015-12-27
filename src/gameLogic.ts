@@ -9,6 +9,7 @@ interface BoardDelta {
 interface IState {
   board?: Board;
   delta?: BoardDelta;
+  movesHistory?: BoardDelta[];
 }
 
 var playersMap : { [key:number]:string; } = {};
@@ -321,7 +322,8 @@ module gameLogic {
 
     return [firstOperation,
             {set: {key: 'board', value: boardAfterMove}},
-            {set: {key: 'delta', value: delta}}];
+            {set: {key: 'delta', value: delta}},
+            {set: {key: 'movesHistory', value: getMovesHistory(rowS, colS, rowE, colE)}}];
   }
 
   //test commit

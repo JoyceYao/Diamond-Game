@@ -1,8 +1,7 @@
 module.exports = function(grunt) {
   // Auto resize (and pad with white color) an image
   // into multiple sizes for Google&Apple app submission.
-  // modified by JoyceYao --> windows version
-  // using imagemagick v6
+  // modified by JoyceYao --> windows version (using imagemagick v6)
   // for mac version, please see: https://github.com/yoav-zibin/TicTacToe/blob/gh-pages/Gruntfile.js
   var src_img = "src.png";
   var src_img_width_to_height_ratio = 1024/1024;
@@ -206,7 +205,7 @@ module.exports = function(grunt) {
   // Default task(s).
   grunt.registerTask('default', [
       //'karma',
-      'shell',
+      //'shell',
       'concat', 'uglify',
       'processhtml', 'manifest']); //'http-server', 'protractor,
 };

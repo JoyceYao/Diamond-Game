@@ -295,7 +295,8 @@ var gameLogic;
         }
         return [firstOperation,
             { set: { key: 'board', value: boardAfterMove } },
-            { set: { key: 'delta', value: delta } }];
+            { set: { key: 'delta', value: delta } },
+            { set: { key: 'movesHistory', value: getMovesHistory(rowS, colS, rowE, colE) } }];
     }
     gameLogic.createMove = createMove;
     //test commit

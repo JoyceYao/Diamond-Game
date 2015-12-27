@@ -174,10 +174,12 @@ var game;
         return col * 4.427 + 5.5;
     }
     function modifyMoveCSS(delta) {
-        var moveHistory = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
+        //var moveHistory: BoardDelta[] = gameLogic.getMovesHistory(delta.rowS, delta.colS, delta.rowE, delta.colE);
+        var moveHistory = state.movesHistory;
         if (!moveHistory) {
             return;
         }
+        console.log("modifyMoveCSS  moveHistory=" + JSON.stringify(moveHistory));
         var steps = moveHistory.length;
         var finalRow = moveHistory[moveHistory.length - 1].rowE;
         var finalCol = moveHistory[moveHistory.length - 1].colE;
