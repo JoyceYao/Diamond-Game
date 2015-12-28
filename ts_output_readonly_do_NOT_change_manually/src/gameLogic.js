@@ -181,8 +181,6 @@ var gameLogic;
                         nextDeltaList.push({ rowS: rowS, colS: colS, rowE: jumpRow, colE: jumpCol, playerNo: delta[thisDeltaIdx].playerNo });
                         // add to history map
                         addMoveHistory(nextDeltaList);
-                        //console.log("getPossibleMoves delta=" + JSON.stringify(delta));
-                        //console.log("getPossibleMoves nextDeltaList=" + JSON.stringify(nextDeltaList));
                         markAsVisited(possibleMoveBoard, jumpRow, jumpCol);
                         var nextMove = getPossibleJumpMoves(board, possibleMoveBoard, adjPosition, turnIndexBeforeMove, nextDeltaList, originalRow, originalCol);
                         if (nextMove.length > 0) {
@@ -193,7 +191,6 @@ var gameLogic;
             }
             catch (e) { }
         }
-        //console.log("getPossibleJumpMoves possibleMoves[2]=" + JSON.stringify(possibleMoves));
         return possibleMoves;
     }
     gameLogic.getPossibleJumpMoves = getPossibleJumpMoves;
@@ -206,7 +203,6 @@ var gameLogic;
         var rowE = deltaList[deltaList.length - 1].rowE;
         var colE = deltaList[deltaList.length - 1].colE;
         var key = rowS + "_" + colS + "_" + rowE + "_" + colE;
-        //console.log("addMoveHistory key=" + key);
         var prevData = movesHistoryMap[key];
         // if the same move exists and with shorter path, return
         if (prevData && prevData.length <= deltaList.length) {
@@ -217,7 +213,6 @@ var gameLogic;
         if (newDeltaList.length > 1) {
             newDeltaList.splice(0, 1);
         }
-        //console.log("addMoveHistory newDeltaList=" + JSON.stringify(newDeltaList));
         movesHistoryMap[key] = newDeltaList;
     }
     /** Add an '@' mark onto the board representing the position had been visited*/
@@ -311,19 +306,12 @@ var gameLogic;
         // to verify that move is legal.
         try {
             var deltaValue = move[2].set.value;
-            console.log("isMoveOk deltaValue=" + deltaValue);
-            if (deltaValue) {
-                console.log("isMoveOk deltaValue[2]=" + JSON.stringify(deltaValue));
-            }
             var board = stateBeforeMove.board;
             if (!board) {
                 board = getInitialBoard(deltaValue.playerNo);
             }
             var playerNo = deltaValue.playerNo;
             var expectedMove = createMove(board, turnIndexBeforeMove, deltaValue);
-            console.log("isMoveOk move=" + JSON.stringify(move));
-            console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
-            console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
             if (!angular.equals(move, expectedMove)) {
                 console.log("isMoveOk inValidMove!! Move is not the same with expected! move=" + JSON.stringify(move) + " expectedMove=" + JSON.stringify(expectedMove));
                 console.log("isMoveOK movesHistoryMap=" + JSON.stringify(movesHistoryMap));

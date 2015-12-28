@@ -30,10 +30,8 @@ var game;
         document.addEventListener("webkitAnimationEnd", animationEndedCallback, false); // WebKit
         document.addEventListener("oanimationend", animationEndedCallback, false); // Opera
         gameArea = document.getElementById("gameArea");
-        //console.log("gameArea=" + JSON.stringify(gameArea));
         dragAndDropService.addDragListener("gameArea", handleDragEvent);
         gameLogic.initialPLayersMap();
-        ////createRotationMapping();
     }
     game.init = init;
     function animationEndedCallback() {
@@ -148,8 +146,6 @@ var game;
         }
     }
     function getStyle(row, col) {
-        //console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
-        //console.log("getStyle !! =" + lastUpdateUI.playMode != "passAndPlay");
         if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "passAndPlay") {
             return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", zIndex: "100",
                 "-webkit-animation": "moveAnimation 1s",
@@ -183,7 +179,6 @@ var game;
         for (var i = 0; i < steps; i++) {
             var top = (moveHistory[i].rowS - finalRow) * 100 + 10; // top:10%;
             var left = (moveHistory[i].colS - finalCol) * 100 / 2;
-            //cssRules += interval*i + '% {top: ' + top + '%; transform: translateY(-50%); left: ' + left + '%;}';
             cssRules += interval * i + '% {top: ' + top + '%; left: ' + left + '%;}';
         }
         console.log("modifyMoveCSS  cssRules=" + cssRules);
@@ -249,7 +244,6 @@ var game;
                         draggingStartedRowCol = { row: row, col: col };
                         draggingPiece = document.getElementById("cell_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
                         draggingPiece.style.zIndex = ++nextZIndex + "";
-                        //draggingPieceObj = document.getElementById("pieceC_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
                         addSelectedCSSClass();
                     }
                 }
@@ -310,41 +304,24 @@ var game;
         if (draggingPiece.className.indexOf("selected") < 0) {
             draggingPiece.className += " selected";
         }
-        //if (draggingPieceObj.className.indexOf("selected") < 0){ draggingPieceObj.className += "selected"; }
     }
     function addCanDropCSSClass() {
         if (draggingPiece.className.indexOf("canDrop") < 0) {
             draggingPiece.className += " canDrop";
         }
-        //if (draggingPieceObj.className.indexOf("canDrop") < 0){ draggingPieceObj.className += "canDrop"; }
     }
     function removeSelectedCSSClass() {
         draggingPiece.className = draggingPiece.className.replace('selected', '');
-        //draggingPieceObj.className = draggingPieceObj.className.replace('selected' , '');
     }
     function removeCanDropCSSClass() {
         draggingPiece.className = draggingPiece.className.replace('canDrop', '');
-        //draggingPieceObj.className = draggingPieceObj.className.replace('canDrop' , '');
     }
     function removeAllSelectedCSS() {
         removeSelectedCSSClass();
         removeCanDropCSSClass();
     }
-    /*
-      function getRotationPosition(row: number, col:number, clientX: number, clientY: number, playerId: number): IPosition {
-        if(playerId === 0){ return {row: row, col:col}; }
-        var ele = document.elementFromPoint(clientX, clientY);
-        if (!ele) { return null; }
-        console.log("getRotationPosition ele=" + JSON.stringify(ele));
-        var eles = ele.id.split("_");
-        console.log("getRotationPosition ele.id=" + ele.id);
-        console.log("getRotationPosition eles[1]=" + eles[1]);
-        console.log("getRotationPosition eles[2]=" + eles[2]);
-        return {row: parseInt(eles[1]), col: parseInt(eles[2])+2};
-      }*/
     function setDraggingPieceTopLeft(row, col, reset) {
         /* if this is a valid drop position, change the glowing color */
-        console.log("setDraggingPieceTopLeft !!");
         //console.log(gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col));
         //console.log(!(draggingStartedRowCol.row === row && draggingStartedRowCol.col === col));
         if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)

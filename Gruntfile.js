@@ -92,7 +92,7 @@ module.exports = function(grunt) {
         ' -quality 75' +   				// compress the image
         ' ' + output_directory + '\\' + fileName;
 
-    console.log("make command=" + commandStr);
+    //console.log("make command=" + commandStr);
     commands.push(commandStr);
   }
   var auto_resize_images_command = commands.join(" & ");

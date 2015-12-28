@@ -2,7 +2,6 @@
   width: 10%;
   height: 10%;
   border-radius: 50%;
-  behavior: url(PIE.htc); /* remove if you don't care about IE8 */
   background-color: rgba(0, 0, 255, 0.9);
   box-shadow: 0 0 1rem 0.9rem blue;
   border-color: blue;
@@ -45,6 +44,7 @@ td {
   width: 80%
 }
 
+/*
 .rotationR {
 	-webkit-transform: rotate(0deg);
 	-moz-transform: rotate(0deg);
@@ -68,3 +68,4 @@ td {
 	-o-transform: rotate(240deg);
 	transform: rotate(240deg);
 }
+*/

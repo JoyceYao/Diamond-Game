@@ -40,12 +40,8 @@ module game {
     document.addEventListener("oanimationend", animationEndedCallback, false); // Opera
 
     gameArea = document.getElementById("gameArea");
-    //console.log("gameArea=" + JSON.stringify(gameArea));
-
     dragAndDropService.addDragListener("gameArea", handleDragEvent);
-
     gameLogic.initialPLayersMap();
-    ////createRotationMapping();
   }
 
   function animationEndedCallback() {
@@ -168,8 +164,6 @@ module game {
   }
 
   export function getStyle(row: number, col: number): {} {
-    //console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
-    //console.log("getStyle !! =" + lastUpdateUI.playMode != "passAndPlay");
     if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "passAndPlay") {
       return {top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", zIndex:"100",
               "-webkit-animation": "moveAnimation 1s",
@@ -203,7 +197,6 @@ module game {
     for (var i=0; i<steps; i++){
       var top = (moveHistory[i].rowS-finalRow)*100+10;  // top:10%;
       var left = (moveHistory[i].colS-finalCol)*100/2;
-      //cssRules += interval*i + '% {top: ' + top + '%; transform: translateY(-50%); left: ' + left + '%;}';
       cssRules += interval*i + '% {top: ' + top + '%; left: ' + left + '%;}';
     }
 
@@ -265,7 +258,6 @@ module game {
             draggingStartedRowCol = {row: row, col: col};
             draggingPiece = document.getElementById("cell_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
             draggingPiece.style.zIndex = ++nextZIndex + "";
-            //draggingPieceObj = document.getElementById("pieceC_" + draggingStartedRowCol.row + "_" + draggingStartedRowCol.col);
             addSelectedCSSClass();
           }
         }
@@ -324,22 +316,18 @@ module game {
 
   function addSelectedCSSClass(): void {
     if (draggingPiece.className.indexOf("selected") < 0){ draggingPiece.className += " selected"; }
-    //if (draggingPieceObj.className.indexOf("selected") < 0){ draggingPieceObj.className += "selected"; }
   }
 
   function addCanDropCSSClass(): void {
     if (draggingPiece.className.indexOf("canDrop") < 0){ draggingPiece.className += " canDrop"; }
-    //if (draggingPieceObj.className.indexOf("canDrop") < 0){ draggingPieceObj.className += "canDrop"; }
   }
 
   function removeSelectedCSSClass(): void {
     draggingPiece.className = draggingPiece.className.replace('selected' , '');
-    //draggingPieceObj.className = draggingPieceObj.className.replace('selected' , '');
   }
 
   function removeCanDropCSSClass(): void {
     draggingPiece.className = draggingPiece.className.replace('canDrop' , '');
-    //draggingPieceObj.className = draggingPieceObj.className.replace('canDrop' , '');
   }
 
   function removeAllSelectedCSS(): void {
@@ -347,22 +335,8 @@ module game {
     removeCanDropCSSClass();
   }
 
-/*
-  function getRotationPosition(row: number, col:number, clientX: number, clientY: number, playerId: number): IPosition {
-    if(playerId === 0){ return {row: row, col:col}; }
-    var ele = document.elementFromPoint(clientX, clientY);
-    if (!ele) { return null; }
-    console.log("getRotationPosition ele=" + JSON.stringify(ele));
-    var eles = ele.id.split("_");
-    console.log("getRotationPosition ele.id=" + ele.id);
-    console.log("getRotationPosition eles[1]=" + eles[1]);
-    console.log("getRotationPosition eles[2]=" + eles[2]);
-    return {row: parseInt(eles[1]), col: parseInt(eles[2])+2};
-  }*/
-
   function setDraggingPieceTopLeft(row: number, col: number, reset: boolean) {
     /* if this is a valid drop position, change the glowing color */
-    console.log("setDraggingPieceTopLeft !!");
     //console.log(gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col));
     //console.log(!(draggingStartedRowCol.row === row && draggingStartedRowCol.col === col));
     if (gameLogic.getMovesHistory(draggingStartedRowCol.row, draggingStartedRowCol.col, row, col)
@@ -389,39 +363,6 @@ module game {
     }
     return false;
   }
-
-/*
-  var mapping1 : { [key:string]:IPosition; } = {};
-  var mapping2 : { [key:string]:IPosition; } = {};
-  function createRotationMapping() {
-    mapping1['9_6'] = {row: 6, col: 15};
-    mapping1['9_8'] = {row: 5, col: 14};
-    mapping1['9_10'] = {row: 4, col: 13};
-    mapping1['9_12'] = {row: 3, col: 12};
-    mapping1['10_7'] = {row: 5, col: 16};
-    mapping1['10_9'] = {row: 4, col: 15};
-    mapping1['10_11'] = {row: 3, col: 14};
-    mapping1['11_8'] = {row: 4, col: 17};
-    mapping1['11_10'] = {row: 3, col: 16};
-    mapping1['12_9'] = {row: 3, col: 18};
-
-    mapping2['9_6'] = {row: 3, col: 6};
-    mapping2['9_8'] = {row: 4, col: 5};
-    mapping2['9_10'] = {row: 5, col: 4};
-    mapping2['9_12'] = {row: 6, col: 3};
-    mapping2['10_7'] = {row: 3, col: 4};
-    mapping2['10_9'] = {row: 4, col: 3};
-    mapping2['10_11'] = {row: 5, col: 2};
-    mapping2['11_8'] = {row: 3, col: 2};
-    mapping2['11_10'] = {row: 4, col: 1};
-    mapping2['12_9'] = {row: 3, col: 0};
-  }
-
-  function getRotationMapping(row: number, col: number, playerIdx: number) {
-    if (playerIdx == 0) {return {row: row, col: col};  }
-    if (playerIdx === 1){ return mapping1[row+"_"+col]; }
-    else return mapping2[row+"_"+col];
-  }*/
 
 }
 
