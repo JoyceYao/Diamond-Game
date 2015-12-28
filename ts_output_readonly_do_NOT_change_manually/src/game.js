@@ -107,13 +107,7 @@ var game;
     }
     game.getBoardCol = getBoardCol;
     function isSelectableAt(row, col) {
-        var delta = null;
-        if (!state || !state.delta) {
-            delta = { rowS: row, colS: col, rowE: row, colE: col, playerNo: playerNo };
-        }
-        else {
-            delta = state.delta;
-        }
+        var delta = { rowS: row, colS: col, rowE: row, colE: col, playerNo: playerNo };
         return isSelectable(row, col, playerId, delta);
     }
     game.isSelectableAt = isSelectableAt;
@@ -157,8 +151,7 @@ var game;
         //console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
         //console.log("getStyle !! =" + lastUpdateUI.playMode != "passAndPlay");
         if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "passAndPlay") {
-            //console.log("getStyle animation!!");
-            return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto",
+            return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", zIndex: "100",
                 "-webkit-animation": "moveAnimation 1s",
                 "animation": "moveAnimation 1s" };
         }

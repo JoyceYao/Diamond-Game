@@ -121,10 +121,10 @@
     <div ng-repeat="col in game.getBoardCol() track by $index"
         style="position:absolute; top:0; left:{{$index * 4.427 + 5.5}}%; width:{{(rowIdx + $index)%2*8.854}}%; height:100%;"
         id="{{'cell_' + rowIdx + '_' + $index}}"
-        ng-init="colIdx = $index">
+        ng-init="colIdx = $index"
+        ng-class="{blink: game.isSelectableAt(rowIdx, colIdx)}" >
       <div ng-style="game.getStyle(rowIdx, colIdx)"
-          id="{{'pieceC_'+ rowIdx + '_' + colIdx}}"
-          ng-class="{cells: game.isSelectableAt(rowIdx, colIdx)}">
+          id="{{'pieceC_'+ rowIdx + '_' + colIdx}}">
         <svg ng-if="game.isPieceRed(rowIdx, colIdx)"
             id="{{'piece_' + rowIdx + '_' + colIdx}}"
             height="100%" width="100%">
