@@ -323,13 +323,6 @@ var gameLogic;
             var expectedMove = createMove(board, turnIndexBeforeMove, deltaValue);
             console.log("isMoveOk move=" + JSON.stringify(move));
             console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
-            //if(move.length > 3){
-            //  expectedMove[3].set.value = move[3].set.value;
-            //  console.log("isMoveOk move[3].set.value=" + JSON.stringify(move[3].set.value));
-            //  console.log("isMoveOk expectedMove[3].set.value=" + JSON.stringify(expectedMove[3].set.value));
-            //}else if (expectedMove.length == 3){
-            //  expectedMove
-            //}
             console.log("isMoveOk expectedMove=" + JSON.stringify(expectedMove));
             if (!angular.equals(move, expectedMove)) {
                 console.log("isMoveOk inValidMove!! Move is not the same with expected! move=" + JSON.stringify(move) + " expectedMove=" + JSON.stringify(expectedMove));
@@ -455,13 +448,7 @@ var gameLogic;
     }
     game.getBoardCol = getBoardCol;
     function isSelectableAt(row, col) {
-        var delta = null;
-        if (!state || !state.delta) {
-            delta = { rowS: row, colS: col, rowE: row, colE: col, playerNo: playerNo };
-        }
-        else {
-            delta = state.delta;
-        }
+        var delta = { rowS: row, colS: col, rowE: row, colE: col, playerNo: playerNo };
         return isSelectable(row, col, playerId, delta);
     }
     game.isSelectableAt = isSelectableAt;
@@ -505,8 +492,7 @@ var gameLogic;
         //console.log("getStyle !! lastUpdateUI.playMode=" + lastUpdateUI.playMode);
         //console.log("getStyle !! =" + lastUpdateUI.playMode != "passAndPlay");
         if (state.delta && state.delta.rowE === row && state.delta.colE === col && lastUpdateUI.playMode != "passAndPlay") {
-            //console.log("getStyle animation!!");
-            return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto",
+            return { top: "10%", left: "0%", position: "relative", width: "80%", height: "80%", margin: "auto", zIndex: "100",
                 "-webkit-animation": "moveAnimation 1s",
                 "animation": "moveAnimation 1s" };
         }
